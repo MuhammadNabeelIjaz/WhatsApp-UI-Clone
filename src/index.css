@@ -1,0 +1,264 @@
+/* 1. IMPORTS */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+/* 2. TAILWIND V4 THEME ENGINE */
+@theme {
+    /* Existing Mappings */
+    --color-bg-main: var(--bg-main);
+    --color-bg-surface: var(--bg-surface);
+    --color-bg-hover: var(--bg-hover);
+    --color-bg-input: var(--bg-input);
+    --color-bg-input-hover: var(--bg-input-hover);
+    --color-bg-skeleton: var(--bg-skeleton);
+    --color-bg-bubble-out: var(--bg-bubble-out);
+    --color-bg-bubble-in: var(--bg-bubble-in);
+    --color-bg-chat-canvas: var(--bg-chat-canvas);
+
+    --color-border-main: var(--border);
+
+    --color-text-primary: var(--text-primary);
+    --color-text-secondary: var(--text-secondary);
+    --color-text-inverse: var(--text-inverse);
+    --color-text-accent: var(--text-accent);
+    --color-white-hover: var(--white-hover);
+
+    /* ADDED: Functional Colors */
+    --color-accent: var(--accent);
+    --color-accent-soft: var(--accent-soft);
+    --color-accent-active: var(--accent-active);
+    --color-accent-banner-bg: var(--accent-banner-bg);
+    --color-status-success: var(--status-success);
+    --color-status-error: var(--status-error);
+    --color-status-unread: var(--status-unread);
+    --color-status-typing: var(--status-typing);
+
+    /* Custom Animations */
+    --animate-fade-in: fadeIn 0.3s ease-out forwards;
+    --animate-zoom-in: zoomIn 0.2s ease-out forwards;
+    --animate-pop: pop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* 3. CORE VARIABLES (Dark Mode - Default) */
+:root {
+    --bg-main: #0b141a;
+    --bg-surface: #111b21;
+    --bg-hover: #202c33;
+    --bg-input: #2a3942;
+    --bg-input-hover: #374045;
+    --bg-skeleton: #2a3942;
+    --bg-bubble-out: #005c4b;
+    --chat-font-size: 15px;
+    --bg-bubble-in: #202c33;
+    --bg-chat-canvas: #0b141a;
+
+    --text-primary: #e9edef;
+    --text-secondary: #8696a0;
+    --text-inverse: #111b21;
+    --text-accent: #00a884;
+    --white-hover: #ffffff;
+
+    --accent: #00a884;
+    --accent-soft: rgba(0, 168, 132, 0.15);
+
+    /* ADDED: Premium Dark Shades */
+    --status-success: #00a884;
+    /* Verified badge */
+    --status-error: #f15c6d;
+    /* Delete/Error */
+    --status-unread: #00a884;
+    /* Unread badge */
+    --status-typing: #00a884;
+    /* Typing text */
+    --border: #222d34;
+
+    /* Glassmorphism support */
+    --glass-bg: rgba(32, 44, 51, 0.85);
+}
+
+/* 4. LIGHT MODE OVERRIDE */
+.light {
+    --bg-main: #FFFFFF;
+    --bg-chat-canvas: #EFEAE2;
+    --bg-surface: #FFFFFF;
+    --bg-hover: #F0F2F5;
+    --bg-input: #F0F2F5;
+    --bg-input-hover: #E9EDEF;
+    --bg-skeleton: #E9EDEF;
+    --bg-bubble-out: #D9FDD3;
+    --bg-bubble-in: #FFFFFF;
+
+    --text-primary: #111B21;
+    --text-secondary: #667781;
+    --text-inverse: #FFFFFF;
+    --text-accent: #00A884;
+    --white-hover: #54656F;
+
+    --accent: #00A884;
+    --accent-active: #FFFFFF;
+    --accent-soft: #25D366;
+    --accent-banner-bg: #D9FDD3;
+
+    /* Light Shades */
+    --status-success: #00A884;
+    --status-error: #ea0038;
+    --status-unread: #25D366;
+    --status-typing: #00A884;
+    --border: #E9EDEF;
+
+    --glass-bg: rgba(255, 255, 255, 0.8);
+}
+
+/* 5. BASE STYLES */
+@layer base {
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-main);
+        color: var(--text-primary);
+        transition: background-color 0.3s ease, color 0.3s ease;
+        -webkit-tap-highlight-color: transparent;
+        /* Mobile optimization */
+    }
+}
+
+/* 6. UTILITIES & ANIMATIONS */
+@layer utilities {
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(134, 150, 160, 0.2);
+        border-radius: 10px;
+    }
+
+    /* ADDED: Premium Glass Effect */
+    .glass-effect {
+        background: var(--glass-bg);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    /* Animation utility classes */
+    .animate-fade-in {
+        animation: fadeIn 0.25s ease-out forwards;
+    }
+
+    .animate-pulse-once {
+        animation: pulseOnce 3s ease-in-out forwards;
+    }
+    @keyframes pulseOnce {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.6; }
+    }
+    .animate-zoom-in {
+        animation: zoomIn 0.2s ease-out forwards;
+    }
+
+    .animate-slide-in-right {
+        animation: slideInRight 0.25s ease-out forwards;
+    }
+
+    .animate-slide-in-left {
+        animation: slideInLeft 0.25s ease-out forwards;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes zoomIn {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ADDED: Pop animation for reactions */
+@keyframes pop {
+    0% {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+/* Missing animations - added for production completeness */
+.animate-bounce { animation: bounce 1s infinite; }
+.animate-ping { animation: ping 1s cubic-bezier(0,0,0.2,1) infinite; }
+.animate-pulse { animation: pulse 2s cubic-bezier(0.4,0,0.6,1) infinite; }
+.animate-scale-in { animation: scaleIn 0.2s ease-out forwards; }
+.animate-slide-down { animation: slideDown 0.25s ease-out forwards; }
+.animate-slide-up { animation: slideUp 0.25s ease-out forwards; }
+.animate-slide-in-up { animation: slideInUp 0.3s ease-out forwards; }
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(-25%); animation-timing-function: cubic-bezier(0.8,0,1,1); }
+    50% { transform: translateY(0); animation-timing-function: cubic-bezier(0,0,0.2,1); }
+}
+@keyframes ping {
+    75%, 100% { transform: scale(2); opacity: 0; }
+}
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+@keyframes scaleIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+@keyframes slideDown {
+    from { transform: translateY(-10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+@keyframes slideUp {
+    from { transform: translateY(10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+@keyframes slideInUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
