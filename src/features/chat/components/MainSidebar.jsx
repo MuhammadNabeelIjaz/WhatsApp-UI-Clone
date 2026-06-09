@@ -224,8 +224,8 @@ const MainSidebar = ({
                 }}
             />
         );
-    if (view === 'archived')      return <ArchivedView      onBack={() => setView('main')} onChatSelect={onChatSelect} selectedChat={selectedChat} />;
-    if (view === 'locked')        return <LockedView        onBack={() => setView('main')} onChatSelect={onChatSelect} selectedChat={selectedChat} />;
+    if (view === 'archived')      return <ArchivedView      onBack={() => setView('main')} onChatSelect={onChatSelect} selectedChat={selectedChat} onOpenInfoPanel={onOpenInfoPanel} />;
+    if (view === 'locked')        return <LockedView        onBack={() => setView('main')} onChatSelect={onChatSelect} selectedChat={selectedChat} onOpenInfoPanel={onOpenInfoPanel} />;
     if (view === 'linked-devices') return <LinkedDevices    onBack={() => setView('main')} />;
     if (view === 'starred')       return <StarredMessages   onBack={() => setView('main')} starredMessages={starredMessages} onOpenChat={(chatId, messageId) => { setView('main'); onOpenStarredMessage?.({ id: chatId }, messageId); }} />;
     if (view === 'broadcasts')    return <BroadcastsView    onBack={() => setView('main')} />;
