@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import { Icons } from '@constants/icons';
 
 /**
@@ -23,7 +24,7 @@ const ProfilePictureOverlay = ({ chat, onClose, onInfo, onMessage }) => {
         return () => window.removeEventListener('keydown', handler);
     }, [onClose]);
 
-    return (
+    return ReactDOM.createPortal(
         <div
             className="fixed inset-0 z-[2000] flex flex-col items-center justify-center bg-black/90 animate-fade-in"
             onClick={onClose}
@@ -97,7 +98,8 @@ const ProfilePictureOverlay = ({ chat, onClose, onInfo, onMessage }) => {
                     <span className="text-white/70 text-[12px] font-medium">Message</span>
                 </button>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };
 
