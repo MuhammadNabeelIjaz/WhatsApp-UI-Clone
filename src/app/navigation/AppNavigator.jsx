@@ -67,6 +67,7 @@ const AppNavigator = () => {
     const [rightPanelContent,  setRightPanelContent] = useState(null);
     const [scrollToMessageId,  setScrollToMessageId] = useState(null);
     const [openToStarred,      setOpenToStarred]      = useState(false);
+    const [pendingInfoOpen,    setPendingInfoOpen]    = useState(false);
 
     // ── Resize ────────────────────────────────────────────────────────────
     const sidebar    = useResizable({ initial: 400, min: 220, max: 560, edge: 'right', offset: 64 });
@@ -143,10 +144,19 @@ const AppNavigator = () => {
 
     // Info Panel Fix: dedicated handler — selects chat, opens panel, clears stale override
     const openInfoPanel = useCallback((chat) => {
-        if (chat) setSelectedChat(chat);
-        setRightPanelContent(null);   // let SecondarySidebar auto-detect type from chat
-        setShowRightPanel(true);
-    }, []);
+        if (!chat) return;
+        if (isDesktop) {
+            // Desktop: open SecondarySidebar without switching to chat thread.
+            // Use rightPanelContent so SecondarySidebar can render without selectedChat changing.
+            setSelectedChat(prev => prev ?? chat); // set only if no chat open yet
+            setRightPanelContent({ type: 'contact', data: chat });
+            setShowRightPanel(true);
+        } else {
+            // Mobile: navigate to the chat then trigger overlay inside ChatDetail
+            setSelectedChat(chat);
+            setPendingInfoOpen(true);
+        }
+    }, [isDesktop]);
 
     
     const handleOpenStarredMessage = useCallback((chat, messageId) => {
@@ -199,7 +209,7 @@ const AppNavigator = () => {
                     </React.Suspense>
                 );
             case ROUTES.CALLS:
-                return <React.Suspense fallback={<RouteFallbackCalls />}><CallsScreen onChatOpen={handleChatSelect} isDesktop={isDesktop} onNavigateToSettings={() => handleTabChange(ROUTES.SETTINGS)} /></React.Suspense>;
+                return <React.Suspense fallback={<RouteFallbackCalls />}><CallsScreen onChatOpen={handleChatSelect} isDesktop={isDesktop} onNavigateToSettings={() => handleTabChange(ROUTES.SETTINGS)} onOpenInfoPanel={openInfoPanel} /></React.Suspense>;
             case ROUTES.AI:
                 return (
                     <div className="flex flex-col items-center justify-center h-full gap-4 text-center px-8">
@@ -242,6 +252,9 @@ const AppNavigator = () => {
                     toggleSidebar={sidebar.resetSize}
                     showRightPanel={showRightPanel}
                     setShowRightPanel={setShowRightPanel}
+                    onOpenInfoPanel={openInfoPanel}
+                    pendingInfoOpen={pendingInfoOpen}
+                    onInfoOpenConsumed={() => setPendingInfoOpen(false)}
                     scrollToMessageId={scrollToMessageId}
                     onScrollToMessageConsumed={() => setScrollToMessageId(null)}
                 />

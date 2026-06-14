@@ -47,6 +47,17 @@ const SecondarySidebar = ({
             );
         }
 
+        // Priority 2: contact info opened from Calls/Archive without switching chat thread
+        if (panelContent?.type === 'contact') {
+            return (
+                <UserInfoPanel
+                    chat={panelContent.data}
+                    onBack={onClose}
+                    onStartChat={() => { onChatSelect(panelContent.data); onClose(); }}
+                />
+            );
+        }
+
         if (!selectedChat) return null;
 
         const chatType = selectedChat.isChannel

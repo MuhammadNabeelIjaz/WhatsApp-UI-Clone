@@ -69,6 +69,7 @@ import EventBubble    from '@features/chat/components/bubbles/EventBubble';
 const ChatDetail = ({
     chat, onBack, isDesktop, sidebarWidth, toggleSidebar, chatType,
     showRightPanel, setShowRightPanel, onOpenInfoPanel,
+    pendingInfoOpen, onInfoOpenConsumed,
     scrollToMessageId, onScrollToMessageConsumed,
 }) => {
     const resolvedType = chatType || (
@@ -173,6 +174,19 @@ const ChatDetail = ({
     useEffect(() => {
         if (chat?.id) dispatch(markAsRead(chat.id));
     }, [chat?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // Cross-screen info panel: when Calls/Archive/Communities fires onOpenInfoPanel,
+    // AppNavigator sets pendingInfoOpen. On mobile (no SecondarySidebar) we open the
+    // overlay inside ChatDetail once the chat is mounted/switched.
+    useEffect(() => {
+        if (!pendingInfoOpen) return;
+        // Small delay lets the chat render settle before overlaying
+        const t = setTimeout(() => {
+            if (!isDesktop) overlays.openUserInfo();
+            onInfoOpenConsumed?.();
+        }, 80);
+        return () => clearTimeout(t);
+    }, [pendingInfoOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // ── Message action handlers ───────────────────────────────────────────────
 
