@@ -37,21 +37,12 @@ const EventCreation = ({ onClose, onSend }) => {
 
     return (
         <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
-            className="fixed inset-0 z-[700] flex items-center justify-center bg-black/60 px-4 py-6"
-            onClick={onClose}
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+            className="absolute inset-0 z-[700] bg-bg-surface flex flex-col overflow-hidden"
         >
-            <motion.div
-                initial={{ scale: 0.95, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.95, opacity: 0 }}
-                transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-                className="w-full max-w-md bg-bg-surface rounded-2xl shadow-2xl flex flex-col overflow-hidden max-h-[90vh]"
-                onClick={e => e.stopPropagation()}
-            >
             {/* Header */}
             <header className="flex items-center gap-3 px-3 py-3 border-b border-border-main shrink-0 bg-bg-surface">
                 <button
@@ -167,7 +158,6 @@ const EventCreation = ({ onClose, onSend }) => {
                     Send
                 </button>
             </div>
-            </motion.div>
         </motion.div>
     );
 };

@@ -11,7 +11,7 @@ import ProfilePictureOverlay from '@shared/ui/display/ProfilePictureOverlay';
  * WhatsApp Web Clone - Locked Chats View
  * Displays chats where isLocked is true with privacy warnings
  */
-const LockedView = ({ onBack, onChatSelect, selectedChat }) => {
+const LockedView = ({ onBack, onChatSelect, selectedChat, onOpenInfoPanel }) => {
     const chats = useSelector(selectChats);
     const lockedChats = chats.filter(chat => chat.isLocked);
     const [avatarOverlayChat, setAvatarOverlayChat] = React.useState(null);
@@ -87,6 +87,7 @@ const LockedView = ({ onBack, onChatSelect, selectedChat }) => {
                 <ProfilePictureOverlay
                     chat={avatarOverlayChat}
                     onClose={() => setAvatarOverlayChat(null)}
+                    onInfo={() => { setAvatarOverlayChat(null); onChatSelect(avatarOverlayChat); onOpenInfoPanel?.(avatarOverlayChat); }}
                     onMessage={() => { setAvatarOverlayChat(null); onChatSelect(avatarOverlayChat); }}
                 />
             )}

@@ -131,7 +131,7 @@ const BlockReasonScreen = ({ contactName, onBack, onBlock }) => {
 };
 
 /* ─────────────── CALL INFO SCREEN ─────────────── */
-const CallInfoScreen = ({ call, onBack, onCall, onVideoCall, onMessage, onRemoveCall }) => {
+const CallInfoScreen = ({ call, onBack, onCall, onVideoCall, onMessage, onRemoveCall, onInfo }) => {
     const isMissed = call?.status === 'missed';
     const isIncoming = call?.direction === 'incoming';
 
@@ -235,9 +235,12 @@ const CallInfoScreen = ({ call, onBack, onCall, onVideoCall, onMessage, onRemove
 
             {/* Profile */}
             <div className="flex flex-col items-center pt-8 pb-6 px-4">
-                <div className="mb-4">
+                <button
+                    className="mb-4 rounded-full active:scale-95 transition-transform"
+                    onClick={() => onInfo?.({ id: call?.id, name: call?.name, avatar: call?.avatar || '' })}
+                >
                     <Avatar src={call?.avatar} name={call?.name || 'U'} size={96} shape="circle" />
-                </div>
+                </button>
                 <h2 className="text-[22px] font-semibold text-text-primary mb-1">{call?.name || 'Unknown'}</h2>
             </div>
 

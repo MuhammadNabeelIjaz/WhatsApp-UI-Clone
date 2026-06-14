@@ -92,7 +92,7 @@ const AttachmentMenu = ({ isOpen, onClose, onAttach, onPoll, onEvent, onLabels }
   return (
     <>
       <div className="fixed inset-0 z-[40]" onClick={onClose} />
-      <div className="absolute bottom-[80px] left-4 right-4 bg-bg-hover rounded-[24px] p-6 shadow-2xl grid grid-cols-3 gap-y-6 animate-fade-in z-50 border border-border-main/10 backdrop-blur-xl">
+      <div className="absolute bottom-[80px] left-2 right-2 bg-bg-hover rounded-[24px] p-5 shadow-2xl grid grid-cols-4 gap-x-2 gap-y-5 animate-fade-in z-50 border border-border-main/10 backdrop-blur-xl">
         {items.map((item, index) => (
           <div
             key={index}
@@ -100,12 +100,12 @@ const AttachmentMenu = ({ isOpen, onClose, onAttach, onPoll, onEvent, onLabels }
             className="flex flex-col items-center gap-2 cursor-pointer group"
           >
             <div
-              className="w-[52px] h-[52px] rounded-full flex items-center justify-center text-white transition-all duration-200 group-hover:scale-110 active:scale-95 shadow-lg shadow-black/20"
+              className="w-[48px] h-[48px] rounded-full flex items-center justify-center text-white transition-all duration-200 group-hover:scale-110 active:scale-95 shadow-lg shadow-black/20"
               style={{ backgroundColor: item.color }}
             >
               {item.icon}
             </div>
-            <span className="text-[12px] text-text-secondary font-medium tracking-wide">{item.label}</span>
+            <span className="text-[11px] text-text-secondary font-medium tracking-wide text-center leading-tight">{item.label}</span>
           </div>
         ))}
       </div>

@@ -36,7 +36,7 @@ const CALL_LOGS_DATA = [
     { id: 6, name: 'Heart Beat Jani', time: '1 June, 1:24 pm', type: 'audio', direction: 'incoming', status: 'missed', avatar: '' },
 ];
 
-const CallsScreen = ({ onChatOpen, isDesktop, onNavigateToSettings }) => {
+const CallsScreen = ({ onChatOpen, isDesktop, onNavigateToSettings, onOpenInfoPanel }) => {
     const dispatch = useDispatch();
 
     const isLoading = useFakeLoading(500);
@@ -177,6 +177,7 @@ const CallsScreen = ({ onChatOpen, isDesktop, onNavigateToSettings }) => {
                 if (selectedCallInfo?.__historyKey) dispatch(removeCallHistoryEntry(selectedCallInfo.__historyKey));
                 logger.event('CallsScreen', 'remove_call_log', { callId });
             }}
+            onInfo={(chat) => onOpenInfoPanel?.(chat)}
         />
     );
 

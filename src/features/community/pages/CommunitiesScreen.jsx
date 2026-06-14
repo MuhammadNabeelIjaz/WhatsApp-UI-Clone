@@ -266,7 +266,16 @@ const CommunitiesScreen = ({ onChatOpen, onCommunityInfo, onNavigateToSettings }
             </div>
 
             {zoomChat && (
-                <ProfilePictureOverlay chat={zoomChat} onClose={closeZoom} />
+                <ProfilePictureOverlay
+                    chat={zoomChat}
+                    onClose={closeZoom}
+                    onInfo={() => {
+                        closeZoom();
+                        const target = communities.find(c => c.name === zoomChat.name) || zoomChat;
+                        if (onCommunityInfo) onCommunityInfo(target);
+                        else setCommunityInfoTarget(target);
+                    }}
+                />
             )}
         </div>
     );

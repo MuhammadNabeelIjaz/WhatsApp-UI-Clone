@@ -168,7 +168,7 @@ const StatusScreen = ({ onChatOpen, onNavigateToSettings, onOpenStarred }) => {
         return <CreateChannelScreen onBack={goBack} onCreate={(ch) => { dispatch(addChannel(ch)); goBack(); }} />;
 
     if (view === 'explore')
-        return <ExploreChannelsScreen onBack={goBack} />;
+        return <ExploreChannelsScreen onBack={goBack} onChatOpen={onChatOpen} />;
 
     if (selectedChannel)
         return <ChannelInfoScreen channel={selectedChannel} onBack={() => setSelectedChannel(null)} onUnfollow={() => setSelectedChannel(null)} />;

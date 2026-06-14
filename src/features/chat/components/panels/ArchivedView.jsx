@@ -15,7 +15,7 @@ import { ArchivedViewSkeleton } from '@shared/ui/display/Skeletons';
 import ConfirmDialog from '@shared/ui/feedback/ConfirmDialog';
 import ProfilePictureOverlay from '@shared/ui/display/ProfilePictureOverlay';
 
-const ArchivedView = ({ onBack, onChatSelect, selectedChat }) => {
+const ArchivedView = ({ onBack, onChatSelect, selectedChat, onOpenInfoPanel }) => {
     const dispatch = useDispatch();
     const chats = useSelector(selectChats);
 
@@ -216,6 +216,7 @@ const ArchivedView = ({ onBack, onChatSelect, selectedChat }) => {
                 <ProfilePictureOverlay
                     chat={avatarOverlayChat}
                     onClose={() => setAvatarOverlayChat(null)}
+                    onInfo={() => { setAvatarOverlayChat(null); onChatSelect(avatarOverlayChat); onOpenInfoPanel?.(avatarOverlayChat); }}
                     onMessage={() => { setAvatarOverlayChat(null); onChatSelect(avatarOverlayChat); }}
                 />
             )}

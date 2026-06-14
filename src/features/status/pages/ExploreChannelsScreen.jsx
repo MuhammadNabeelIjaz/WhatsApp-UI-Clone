@@ -21,7 +21,7 @@ const EXPLORE_CHANNELS = [
 
 const CATS = ['All', 'Most active', 'Popular', 'News', 'Sports'];
 
-const ExploreChannelsScreen = ({ onBack }) => {
+const ExploreChannelsScreen = ({ onBack, onChatOpen }) => {
     const dispatch = useDispatch();
     const channels = useSelector(selectChannels);
     const [activecat, setActivecat] = useState('All');
@@ -122,7 +122,10 @@ const ExploreChannelsScreen = ({ onBack }) => {
                             >
                                 {channel.icon}
                             </button>
-                            <div className="flex-1 min-w-0">
+                            <div
+                                className="flex-1 min-w-0 cursor-pointer"
+                                onClick={() => onChatOpen?.({ id: channel.id, name: channel.name, avatar: null, isChannel: true, lastMessage: `${channel.followers} followers`, time: '' })}
+                            >
                                 <p className="text-[15px] font-semibold text-text-primary truncate">{channel.name}</p>
                                 <p className="text-[12px] text-text-secondary">{channel.followers} followers · {channel.cat}</p>
                             </div>
