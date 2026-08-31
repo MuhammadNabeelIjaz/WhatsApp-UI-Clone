@@ -15,7 +15,7 @@ const AppInfoModal = ({ onClose }) => (
             <p className="text-text-secondary text-[13px] opacity-60 mb-6">Built with React + Tailwind</p>
             <div className="text-left border-t border-border-main/10 pt-4 space-y-2">
                 <p className="text-[13px] text-text-secondary"><span className="text-accent">Developer:</span> Muhammad Nabeel Ijaz</p>
-                <p className="text-[13px] text-text-secondary"><span className="text-accent">Phone:</span> +92 304 7662828</p>
+                <p className="text-[13px] text-text-secondary"><span className="text-accent">Phone:</span> +1 555-010-9999</p>
             </div>
             <button onClick={onClose} className="mt-6 text-accent font-bold text-[14px] px-4 py-2 hover:bg-accent/10 rounded-full transition-colors">CLOSE</button>
         </div>

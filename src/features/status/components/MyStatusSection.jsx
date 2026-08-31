@@ -3,12 +3,14 @@
 // when the user taps their own status entry.
 
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { selectProfile } from '@core/store/slices/settingsSlice';
 import { Icons } from '@constants/icons';
 import StatusRing from './StatusRing';
 
 // ─── My Status Detail View ────────────────────────────────────────────────────
 
-const MyStatusDetailView = ({ myStatuses, myStatusSeenCount, myStatusEntry, onOpenStatus, onDeleteAll, onClose, showDotMenu, setShowDotMenu, showToast }) => (
+const MyStatusDetailView = ({ myStatuses, myStatusSeenCount, myStatusEntry, onOpenStatus, onDeleteAll, onClose, showDotMenu, setShowDotMenu, showToast, avatarUrl }) => (
     <section className="px-6 pb-6">
         <div className="flex items-center justify-between gap-4 mb-4">
             <div>
@@ -41,7 +43,7 @@ const MyStatusDetailView = ({ myStatuses, myStatusSeenCount, myStatusEntry, onOp
                         ) : myStatuses[myStatuses.length - 1]?.type === 'media' ? (
                             <img src={myStatuses[myStatuses.length - 1].url} className="w-13.5 h-13.5 rounded-full object-cover" alt="My status" />
                         ) : (
-                            <img src="https://i.pravatar.cc/150?u=me" className="w-13.5 h-13.5 rounded-full object-cover" alt="My status" />
+                            <img src={avatarUrl} className="w-13.5 h-13.5 rounded-full object-cover ring-[1.5px] ring-border-main/30" alt="My status" />
                         )}
                     </div>
                     <div className="text-left flex-1 min-w-0">
@@ -135,6 +137,7 @@ const MyStatusSection = ({
     onMyStatusClick,
     showToast,
 }) => {
+    const profile = useSelector(selectProfile);
     const myStatus = myStatuses[myStatuses.length - 1] || null;
 
     if (showMyStatusView) {
@@ -149,6 +152,7 @@ const MyStatusSection = ({
                 showDotMenu={showDotMenu}
                 setShowDotMenu={setShowDotMenu}
                 showToast={showToast}
+                avatarUrl={profile.avatar}
             />
         );
     }
@@ -176,8 +180,8 @@ const MyStatusSection = ({
                     <img src={myStatus.url} className="w-13.5 h-13.5 rounded-full object-cover ring-2 ring-accent" alt="My Status" />
                 ) : (
                     <img
-                        src="https://i.pravatar.cc/150?u=me"
-                        className="w-13.5 h-13.5 rounded-full object-cover"
+                        src={profile.avatar}
+                        className="w-13.5 h-13.5 rounded-full object-cover ring-[1.5px] ring-border-main/30"
                         alt="My Status"
                         onError={(e) => { e.target.style.display = 'none'; }}
                     />

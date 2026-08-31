@@ -172,8 +172,8 @@ const CommunitiesScreen = ({ onChatOpen, onCommunityInfo, onNavigateToSettings }
                             {/* Community header row */}
                             <div
                                 onClick={() => onCommunityInfo ? onCommunityInfo(community) : setSelectedCommunity(community)}
-                                className={`flex items-center p-4 hover:bg-bg-hover transition-colors border-b border-border-main/30 relative
-                                    ${isNew ? 'bg-accent/5 animate-pulse-once' : ''}`}
+                                className={`flex items-center p-4 hover:bg-bg-hover transition-colors border-b border-border-main/30 relative mx-2 rounded-xl my-0.5
+                                      ${isNew ? 'bg-accent/5 animate-pulse-once' : ''}`}
                             >
                                 {/* New badge */}
                                 {isNew && (
@@ -204,7 +204,7 @@ const CommunitiesScreen = ({ onChatOpen, onCommunityInfo, onNavigateToSettings }
                             {/* Announcements sub-group — always shown */}
                             {announcementGroup && (
                                 <div
-                                    className="flex items-center p-3 px-4 hover:bg-bg-hover/50 cursor-pointer"
+                                    className="flex items-center p-3 px-4 hover:bg-bg-hover/50 cursor-pointer mx-2 rounded-xl my-0.5"
                                     onClick={() => handleSubGroupClick(announcementGroup, community)}
                                 >
                                     <div className="flex-shrink-0 w-[48px] h-[48px] flex items-center justify-center">
@@ -228,7 +228,7 @@ const CommunitiesScreen = ({ onChatOpen, onCommunityInfo, onNavigateToSettings }
                             {otherGroups.slice(0, 2).map((sub) => (
                                 <div
                                     key={sub.id}
-                                    className="flex items-center p-3 px-4 hover:bg-bg-hover/50 cursor-pointer"
+                                    className="flex items-center p-3 px-4 hover:bg-bg-hover/50 cursor-pointer mx-2 rounded-xl my-0.5"
                                     onClick={() => handleSubGroupClick(sub, community)}
                                 >
                                     <div className="flex-shrink-0 w-[48px] h-[48px] flex items-center justify-center">
@@ -248,7 +248,7 @@ const CommunitiesScreen = ({ onChatOpen, onCommunityInfo, onNavigateToSettings }
 
                             {/* View all */}
                             <div
-                                className="flex items-center p-3 px-4 pl-[76px] hover:bg-bg-hover/50 cursor-pointer group"
+                                className="flex items-center p-3 px-4 pl-[76px] hover:bg-bg-hover/50 cursor-pointer group mx-2 rounded-xl my-0.5"
                                 onClick={() => onCommunityInfo ? onCommunityInfo(community) : setSelectedCommunity(community)}
                             >
                                 <div className="flex items-center w-full pb-2">

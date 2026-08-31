@@ -74,11 +74,11 @@ const ChatInputBar = ({ onAttachToggle, onSendMessage, replyingTo, onCancelReply
         setIsPaused(false);
         clearInterval(timerRef.current);
         if (send && recordSeconds > 0) {
-            // In a real app, would send the audio blob
+            onSendMessage?.({ type: 'voice', duration: formatTime(recordSeconds) });
         }
         setRecordSeconds(0);
         setWaveformBars(Array(40).fill(0.15));
-    }, [recordSeconds]);
+    }, [recordSeconds, onSendMessage]);
 
     const togglePause = useCallback(() => {
         setIsPaused(p => !p);
@@ -87,7 +87,7 @@ const ChatInputBar = ({ onAttachToggle, onSendMessage, replyingTo, onCancelReply
     // Recording UI
     if (isRecording) {
         return (
-            <div className="px-3 py-3 bg-bg-surface flex items-center gap-3 min-h-[62px] relative z-40 animate-fade-in">
+            <div className="px-3 py-3 bg-bg-mini-sidebar flex items-center gap-3 min-h-[62px] relative z-40 animate-fade-in">
                 {/* Delete */}
                 <button
                     onClick={() => stopRecording(false)}
@@ -148,9 +148,9 @@ const ChatInputBar = ({ onAttachToggle, onSendMessage, replyingTo, onCancelReply
 
     // Normal input UI
     return (
-        <div className="px-3 py-2 bg-bg-surface flex flex-col gap-1 transition-all duration-300 relative z-40">
+        <div className="px-3 py-2 bg-bg-mini-sidebar flex flex-col gap-1 transition-all duration-300 relative z-40">
             {replyingTo && (
-                <div className="bg-bg-surface border border-border-main/20 rounded-2xl p-3 flex items-start justify-between gap-3 mx-1">
+                <div className="bg-bg-mini-sidebar border border-border-main/20 rounded-2xl p-3 flex items-start justify-between gap-3 mx-1">
                     <div className="min-w-0">
                         <p className="text-[11px] uppercase tracking-[0.2em] text-text-secondary mb-1">Replying to</p>
                         <p className="text-[14px] text-text-primary truncate">
@@ -168,7 +168,7 @@ const ChatInputBar = ({ onAttachToggle, onSendMessage, replyingTo, onCancelReply
             )}
             <div className="flex items-end gap-2">
                 {/* Input box with emoji + plus inside */}
-                <div className="flex-1 bg-bg-hover rounded-3xl flex flex-col shadow-inner transition-all border border-border-main/5 min-h-[46px]">
+                <div className="flex-1 bg-bg-bubble-in rounded-3xl flex flex-col shadow-inner transition-all border border-border-main/5 min-h-[46px]">
                     {/* Emoji picker panel */}
                     {showEmojiPicker && (
                         <div className="px-3 pt-3 pb-1 flex flex-wrap gap-1.5 max-h-[120px] overflow-y-auto custom-scrollbar">

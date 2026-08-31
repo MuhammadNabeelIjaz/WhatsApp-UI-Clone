@@ -231,7 +231,7 @@ const MainSidebar = ({
     if (view === 'broadcasts')    return <BroadcastsView    onBack={() => setView('main')} />;
 
     return (
-        <div className="flex flex-col w-full h-full bg-bg-surface select-none relative transition-all duration-300">
+        <div className="flex flex-col w-full h-full bg-bg-chat-list select-none relative transition-all duration-300">
 
             <SidebarHeader
                 isDarkMode={isDarkMode}
