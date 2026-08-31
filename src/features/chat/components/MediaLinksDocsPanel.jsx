@@ -4,15 +4,15 @@ import { Icons } from '@constants/icons';
 import { MediaLinkDocsSkeleton } from '@shared/ui/display/Skeletons';
 // Sample media data
 const SAMPLE_MEDIA = [
-    { id: 'm1', type: 'image', src: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=200', time: '8:58 am' },
-    { id: 'm2', type: 'image', src: 'https://images.unsplash.com/photo-1555992336-03a23c7b20ee?w=200', time: 'Yesterday' },
-    { id: 'm3', type: 'image', src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=200', time: 'Mon' },
-    { id: 'm4', type: 'image', src: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=200', time: 'Sun' },
-    { id: 'm5', type: 'video', src: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=200', time: 'Sat' },
-    { id: 'm6', type: 'image', src: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200', time: 'Fri' },
-    { id: 'm7', type: 'image', src: 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=200', time: 'Thu' },
-    { id: 'm8', type: 'video', src: 'https://images.unsplash.com/photo-1605602853970-2a4a39e2a0bc?w=200', time: 'Wed' },
-    { id: 'm9', type: 'image', src: 'https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=200', time: 'Tue' },
+    { id: 'm1', type: 'image', src: 'https://placehold.co/200x200/png', time: '8:58 am' },
+    { id: 'm2', type: 'image', src: 'https://placehold.co/200x200/png', time: 'Yesterday' },
+    { id: 'm3', type: 'image', src: 'https://placehold.co/200x200/png', time: 'Mon' },
+    { id: 'm4', type: 'image', src: 'https://placehold.co/200x200/png', time: 'Sun' },
+    { id: 'm5', type: 'video', src: 'https://placehold.co/200x200/png', time: 'Sat' },
+    { id: 'm6', type: 'image', src: 'https://placehold.co/200x200/png', time: 'Fri' },
+    { id: 'm7', type: 'image', src: 'https://placehold.co/200x200/png', time: 'Thu' },
+    { id: 'm8', type: 'video', src: 'https://placehold.co/200x200/png', time: 'Wed' },
+    { id: 'm9', type: 'image', src: 'https://placehold.co/200x200/png', time: 'Tue' },
 ];
 
 const SAMPLE_LINKS = [

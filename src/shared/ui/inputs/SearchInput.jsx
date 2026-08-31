@@ -20,7 +20,7 @@ const SearchInput = forwardRef(({
     className = '',
     ...rest
 }, ref) => (
-    <div className={`flex items-center gap-2 bg-bg-input rounded-full px-4 py-2.5 ${className}`}>
+    <div className={`flex items-center gap-2 bg-bg-input focus-within:bg-bg-main rounded-full px-4 py-2.5 ${className}`}>
         <Icons.Search size={16} className="text-text-secondary shrink-0" />
         <input
             ref={ref}

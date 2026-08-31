@@ -8,19 +8,19 @@ const AnnouncementChatScreen = ({ group, onBack }) => {
     const scrollRef = useRef();
 
     const [messages] = useState([
-        { id: 1, sender: 'Arman Adil Mangat', number: '+92 346 2287062', text: 'Online class link of principles of Marketing Ali bukhari C7??', time: '8:56 am', color: '#3498db' },
+        { id: 1, sender: 'Arman Adil Mangat', number: '+1 555-010-0201', text: 'Online class link of principles of Marketing Ali bukhari C7??', time: '8:56 am', color: '#3498db' },
         {
             id: 2,
             sender: 'Not Your Type',
-            number: '+92 316 6465028',
+            number: '+1 555-010-0202',
             text: 'ye to LMS k halat hain',
             time: '8:58 am',
             color: '#e67e22',
             image: 'https://i.ibb.co/vYf0YfV/lms-screenshot.png',
             reactions: '💀 2'
         },
-        { id: 3, sender: 'Mustafa Hassan', number: '+92 317 4124920', text: 'Idr kesa mila ga apko apni mail dekho', time: '9:02 am', color: '#2ecc71', replyTo: 'Online class link of principles...' },
-        { id: 4, sender: 'Gul Ali', number: '+92 305 6014521', text: 'Nope 👍', time: '9:15 am', color: '#9b59b6' }
+        { id: 3, sender: 'Mustafa Hassan', number: '+1 555-010-0203', text: 'Idr kesa mila ga apko apni mail dekho', time: '9:02 am', color: '#2ecc71', replyTo: 'Online class link of principles...' },
+        { id: 4, sender: 'Gul Ali', number: '+1 555-010-0204', text: 'Nope 👍', time: '9:15 am', color: '#9b59b6' }
     ]);
 
     useEffect(() => {

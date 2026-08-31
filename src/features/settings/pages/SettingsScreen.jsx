@@ -174,14 +174,14 @@ const SettingsScreen = ({ onBack }) => {
                     >
                         <div className="relative shrink-0">
                             <img
-                                src="https://i.ibb.co/Sbdchp3/Screenshot-2026-01-26-014349-1-removebg-preview.png"
+                                src="https://media.licdn.com/dms/image/v2/D4D35AQEo7B-5pOKGjw/profile-framedphoto-shrink_400_400/B4DaBTLml_KkAU-/0/1788101946087?e=1788760800&v=beta&t=dLPyspBgwi_JtqnyQqrUR0CoUI_lcQRK8HEry44tR8Q"
                                 alt="Profile"
                                 className="w-[64px] h-[64px] rounded-full object-cover shadow-md border-2 border-border-main/10"
                             />
                         </div>
                         <div className="flex-1 min-w-0">
                             <h2 className="text-[19px] font-semibold text-text-primary truncate">Muhammad Nabeel Ijaz</h2>
-                            <p className="text-[14px] text-text-secondary truncate mt-0.5">+92 304 7662828</p>
+                            <p className="text-[14px] text-text-secondary truncate mt-0.5">+1 555-010-9999</p>
                             <div className="mt-2 px-3 py-1 rounded-lg inline-flex items-center text-[12px] bg-accent/10 text-accent font-arabic">
                                 إِيَّاک نَعْبُدُ وَ إِيَّاكَ نَسْتَعِينُ
                             </div>

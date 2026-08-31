@@ -17,7 +17,7 @@ const SettingsRow = ({ icon, title, subtitle, onClick, rightElement }) => {
     return (
         <div
             onClick={onClick}
-            className={`flex items-center px-5 py-4 transition-all duration-200 group
+            className={`flex items-center px-4 py-3 mx-2 my-0.5 rounded-xl transition-all duration-200 group
                 ${isClickable ? 'cursor-pointer hover:bg-bg-hover active:bg-bg-hover/80' : ''}
             `}
         >

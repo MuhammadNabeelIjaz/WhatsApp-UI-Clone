@@ -28,12 +28,12 @@ import AddFavoriteHub from '../components/AddFavoriteHub';
 
 // Module-level constant so the full list can be restored via setState([...CALL_LOGS_DATA])
 const CALL_LOGS_DATA = [
-    { id: 1, name: 'Laiba Jax (2)', time: 'Yesterday, 2:37 pm', type: 'audio', direction: 'incoming', status: 'connected', avatar: '' },
-    { id: 2, name: 'Tahir Yr', time: 'Yesterday, 10:23 am', type: 'audio', direction: 'incoming', status: 'connected', avatar: '' },
-    { id: 3, name: 'Usman', time: 'Yesterday, 10:05 am', type: 'audio', direction: 'incoming', status: 'connected', avatar: '' },
-    { id: 4, name: 'Tahir Yr', time: '8 March, 12:35 pm', type: 'audio', direction: 'incoming', status: 'missed', avatar: '' },
-    { id: 5, name: 'Anam Masood Api', time: '5 March, 10:25 pm', type: 'audio', direction: 'incoming', status: 'missed', avatar: '' },
-    { id: 6, name: 'Heart Beat Jani', time: '1 June, 1:24 pm', type: 'audio', direction: 'incoming', status: 'missed', avatar: '' },
+    { id: 1, name: 'Hina Jax', time: 'Yesterday, 2:37 pm', type: 'audio', direction: 'incoming', status: 'connected', avatar: '' },
+    { id: 2, name: 'Hamza', time: 'Yesterday, 10:23 am', type: 'audio', direction: 'incoming', status: 'connected', avatar: '' },
+    { id: 3, name: 'Bilal', time: 'Yesterday, 10:05 am', type: 'audio', direction: 'incoming', status: 'connected', avatar: '' },
+    { id: 4, name: 'Usman', time: '8 March, 12:35 pm', type: 'audio', direction: 'incoming', status: 'missed', avatar: '' },
+    { id: 5, name: 'Ayesha', time: '5 March, 10:25 pm', type: 'audio', direction: 'incoming', status: 'missed', avatar: '' },
+    { id: 6, name: 'Ali', time: '1 June, 1:24 pm', type: 'audio', direction: 'incoming', status: 'missed', avatar: '' },
 ];
 
 const CallsScreen = ({ onChatOpen, isDesktop, onNavigateToSettings, onOpenInfoPanel }) => {
@@ -81,7 +81,7 @@ const CallsScreen = ({ onChatOpen, isDesktop, onNavigateToSettings, onOpenInfoPa
 
     const handleAvatarClick = useCallback((c) =>
         openZoom({ name: c.name, avatar: c.avatar || null, avatarColor: '#374151' }),
-    [openZoom]);
+        [openZoom]);
 
     const handleSearchToggle = () => {
         if (showSearch) {
@@ -100,7 +100,7 @@ const CallsScreen = ({ onChatOpen, isDesktop, onNavigateToSettings, onOpenInfoPa
         onAddContact={(prefillPhone) => { setIsKeypadOpen(false); setView('new-contact'); setPrefillPhone(prefillPhone || ''); }}
         onCall={(contact) => { dispatch(startCall(contact || { name: 'Unknown' })); setIsKeypadOpen(false); setView('active-call'); }}
         onMessage={(phoneNumber) => {
-            
+
             setIsKeypadOpen(false);
             if (onChatOpen) {
                 // Find existing chat by phone number, or open a new one
@@ -118,30 +118,15 @@ const CallsScreen = ({ onChatOpen, isDesktop, onNavigateToSettings, onOpenInfoPa
             }
         }}
     />;
-    
+
     if (view === 'active-call') {
-        const callScreen = (
+        return (
             <ActiveCallScreen
                 call={activeCall}
                 onEnd={() => { dispatch(endCall()); setView('main'); }}
                 isDesktop={isDesktop}
             />
         );
-        if (isDesktop) {
-            return createPortal(
-                <div className="fixed inset-0 z-[9000] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
-                    
-                    <div
-                        className="relative w-[80vw] max-w-4xl rounded-2xl overflow-hidden shadow-2xl border border-white/10"
-                        style={{ height: 'min(80vh, 600px)', animation: 'zoomIn 0.22s ease-out forwards' }}
-                    >
-                        {callScreen}
-                    </div>
-                </div>,
-                document.body
-            );
-        }
-        return callScreen;
     };
     if (view === 'scheduled-calls') return <ScheduledCallsScreen onBack={() => setView('main')} />;
     if (view === 'create-call-link') return <CreateCallLinkScreen onBack={() => setView('main')} />;
@@ -151,7 +136,7 @@ const CallsScreen = ({ onChatOpen, isDesktop, onNavigateToSettings, onOpenInfoPa
     if (view === 'new-group') return <NewGroupScreen onBack={() => setView('main')} onCallGroup={(contacts, name) => { dispatch(startCall({ name: name || contacts.map(c => c.name.split(' ')[0]).join(', ') })); setView('active-call'); }} />;
 
     // Opens the contact's chat in the main window rather than navigating to a call sub-screen
-    
+
     if (view === 'call-info') return (
         <CallInfoScreen
             call={selectedCallInfo}
@@ -233,31 +218,31 @@ const CallsScreen = ({ onChatOpen, isDesktop, onNavigateToSettings, onOpenInfoPa
             <div className="flex-1 overflow-y-auto custom-scrollbar">
                 {/* Add Favorite — hidden during search */}
                 {!showSearch && (
-                <div
-                    onClick={() => setView('add-favorite')}
-                    className="px-4 py-3 flex items-center gap-4 hover:bg-bg-hover cursor-pointer group"
-                >
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center bg-accent shadow-sm group-active:scale-95 transition-transform">
-                        <Icons.Heart size={22} className="text-white" fill="currentColor" />
+                    <div
+                        onClick={() => setView('add-favorite')}
+                        className="px-4 py-3 flex items-center gap-4 hover:bg-bg-hover cursor-pointer group"
+                    >
+                        <div className="w-12 h-12 rounded-full flex items-center justify-center bg-accent shadow-sm group-active:scale-95 transition-transform">
+                            <Icons.Heart size={22} className="text-white" fill="currentColor" />
+                        </div>
+                        <span className="text-[17px] font-medium text-text-primary">Add favorite</span>
                     </div>
-                    <span className="text-[17px] font-medium text-text-primary">Add favorite</span>
-                </div>
                 )}
 
                 {/* Call Link — hidden during search */}
                 {!showSearch && (
-                <div
-                    onClick={() => setView('create-call-link')}
-                    className="px-4 py-3 flex items-center gap-4 hover:bg-bg-hover cursor-pointer group"
-                >
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center bg-accent/10 group-active:scale-95 transition-transform">
-                        <Icons.Paperclip size={24} className="text-accent -rotate-45" />
+                    <div
+                        onClick={() => setView('create-call-link')}
+                        className="px-4 py-3 flex items-center gap-4 hover:bg-bg-hover cursor-pointer group"
+                    >
+                        <div className="w-12 h-12 rounded-full flex items-center justify-center bg-accent/10 group-active:scale-95 transition-transform">
+                            <Icons.Paperclip size={24} className="text-accent -rotate-45" />
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-[17px] font-medium text-text-primary">Create call link</span>
+                            <span className="text-[14px] opacity-70 text-text-secondary">Share a link for your WhatsApp call</span>
+                        </div>
                     </div>
-                    <div className="flex flex-col">
-                        <span className="text-[17px] font-medium text-text-primary">Create call link</span>
-                        <span className="text-[14px] opacity-70 text-text-secondary">Share a link for your WhatsApp call</span>
-                    </div>
-                </div>
                 )}
 
                 <h2 className="px-4 py-4 text-[14px] font-bold uppercase tracking-wide text-text-primary">

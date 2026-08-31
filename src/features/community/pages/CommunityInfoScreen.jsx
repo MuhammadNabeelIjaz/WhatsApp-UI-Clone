@@ -188,9 +188,13 @@ const CommunityInfoScreen = ({ community, onBack, onGroupClick, onEdit: _onEdit 
                         return (
                             <button key={id} onClick={() => dispatch(showToast(`${contact.name}`, 'info'))}
                                 className="flex items-center gap-4 w-full px-5 py-3 hover:bg-bg-hover transition-colors border-b border-border-main/10 text-left active:bg-bg-hover/80">
-                                <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center shrink-0 text-[16px] font-bold text-white" style={{ background: contact.avatarColor || '#6b7280' }}>
-                                    {contact.avatar ? <img src={contact.avatar} alt={contact.name} className="w-full h-full object-cover" /> : (contact.initials || contact.name?.slice(0, 2).toUpperCase())}
-                                </div>
+                                <Avatar
+                                    src={contact.avatar}
+                                    name={contact.name}
+                                    initials={contact.initials}
+                                    color={contact.avatarColor}
+                                    size={48}
+                                />
                                 <div className="flex-1 min-w-0">
                                     <p className="text-[16px] text-text-primary truncate">{contact.name}</p>
                                     {(contact.about || contact.status) && <p className="text-[13px] text-text-secondary truncate mt-0.5">{contact.about || contact.status}</p>}
@@ -227,7 +231,7 @@ const CommunityInfoScreen = ({ community, onBack, onGroupClick, onEdit: _onEdit 
                         <div className="flex gap-1 overflow-hidden rounded-lg">
                             {['photo-1593642632559-0c6d3fc62b89','photo-1585771724684-38269d6639fd','photo-1571019614242-c5c5dee9f50b','photo-1596462502278-27bfdc403348'].map((id, i) => (
                                 <div key={i} className="flex-1 aspect-square overflow-hidden">
-                                    <img src={`https://images.unsplash.com/${id}?w=200`} alt="" className="w-full h-full object-cover" />
+                                    <img src={`https://placehold.co/200x200/png?text=${id}`} alt="" className="w-full h-full object-cover" />
                                 </div>
                             ))}
                         </div>

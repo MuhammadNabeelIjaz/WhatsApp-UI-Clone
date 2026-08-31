@@ -43,6 +43,12 @@ const channelSlice = createSlice({
       if (channel) channel.isHidden = true;
     },
 
+    // ── Read ───────────────────────────────────────────────────────────────
+    markChannelAsRead: (state, action) => {
+      const channel = state.items.find(c => c.id === action.payload);
+      if (channel) channel.unreadCount = 0;
+    },
+
     // ── Add ────────────────────────────────────────────────────────────────
     addChannel: (state, action) => {
       const channel = action.payload;
@@ -90,6 +96,7 @@ export const {
   followChannel,
   unfollowChannel,
   hideChannel,
+  markChannelAsRead,
   addChannel,
   addChannelPost,
 } = channelSlice.actions;

@@ -5,15 +5,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 /**
  * PollBubble — multi-select, animated progress on click, WA reference match.
  */
-const PollBubble = ({ question, options, time, isMine, reaction }) => {
+const PollBubble = ({ question, options, time, isMine, reaction, senderName, senderColor, onSenderClick, allowMultiple = false }) => {
     const [selected, setSelected] = useState(new Set());
     const [voted, setVoted] = useState(false);
 
     const toggle = (index) => {
         setSelected(prev => {
             const next = new Set(prev);
-            if (next.has(index)) next.delete(index);
-            else next.add(index);
+            if (next.has(index)) {
+                next.delete(index);
+            } else {
+                if (!allowMultiple) {
+                    next.clear();
+                }
+                next.add(index);
+            }
             return next;
         });
         if (!voted) setVoted(true);
@@ -31,19 +37,31 @@ const PollBubble = ({ question, options, time, isMine, reaction }) => {
 
     return (
         <div className={`relative flex flex-col ${isMine ? 'items-end' : 'items-start'} mb-5 group`}>
-            <div className={`max-w-[85%] sm:max-w-[420px] p-3 rounded-2xl shadow-md border border-white/5
+            <div className={`max-w-[85%] sm:max-w-[420px] p-3 rounded-2xl shadow-md border border-border-main/20
                 ${isMine ? 'bg-bg-bubble-out rounded-tr-none' : 'bg-bg-bubble-in rounded-tl-none'}`}
             >
+                {/* Sender Name */}
+                {senderName && (
+                    <div 
+                        className="text-[12.5px] font-semibold leading-tight mb-2 cursor-pointer hover:underline"
+                        style={{ color: senderColor || (isMine ? '#34b7f1' : '#e53935') }}
+                        onClick={onSenderClick}
+                    >
+                        {senderName}
+                    </div>
+                )}
                 {/* Question */}
-                <h4 className="text-[16.5px] font-semibold text-white mb-1.5 leading-tight">
+                <h4 className="text-[16.5px] font-semibold text-text-primary mb-1.5 leading-tight">
                     {question}
                 </h4>
 
                 {/* Sub-header */}
-                <div className="flex items-center gap-1.5 mb-4 opacity-70">
-                    <Icons.Info size={12} className="text-[#8696a0]" />
-                    <span className="text-[12px] text-[#8696a0] font-medium">Select one or more</span>
-                </div>
+                {allowMultiple && (
+                    <div className="flex items-center gap-1.5 mb-4 opacity-70">
+                        <Icons.Info size={12} className="text-text-secondary" />
+                        <span className="text-[12px] text-text-secondary font-medium">Select one or more</span>
+                    </div>
+                )}
 
                 {/* Options */}
                 <div className="flex flex-col gap-4">
@@ -69,12 +87,12 @@ const PollBubble = ({ question, options, time, isMine, reaction }) => {
                                                 />
                                             )}
                                         </div>
-                                        <span className="text-[15px] text-white/95 font-medium">
+                                        <span className="text-[15px] text-text-primary font-medium">
                                             {option.text}
                                         </span>
                                     </div>
                                     {voted && (
-                                        <span className="text-[13px] opacity-70 text-white/80 font-semibold ml-2">
+                                        <span className="text-[13px] opacity-70 text-text-primary/90 font-semibold ml-2">
                                             {pct}%
                                         </span>
                                     )}
@@ -86,7 +104,7 @@ const PollBubble = ({ question, options, time, isMine, reaction }) => {
                                         initial={{ width: 0 }}
                                         animate={{ width: voted ? `${pct}%` : '0%' }}
                                         transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-                                        className={`h-full rounded-full transition-colors duration-300 ${isChosen ? 'bg-[#00a884]' : 'bg-[#8696a0]/40'}`}
+                                        className={`h-full rounded-full transition-colors duration-300 ${isChosen ? 'bg-[#00a884]' : 'bg-text-secondary/40'}`}
                                     />
                                 </div>
                             </div>
@@ -96,11 +114,11 @@ const PollBubble = ({ question, options, time, isMine, reaction }) => {
 
                 {/* Footer */}
                 <div className="mt-4 pt-1 flex flex-col gap-1">
-                    <button className="w-full py-2 text-[#53bdeb] text-[14.5px] font-bold hover:bg-white/5 rounded-md transition-colors border-t border-white/5">
+                    <button className="w-full py-2 text-[#53bdeb] text-[14.5px] font-bold hover:bg-white/5 rounded-md transition-colors border-t border-border-main/20">
                         View votes
                     </button>
                     <div className="flex justify-end items-center gap-1.5 px-1 mt-1">
-                        <span className="text-[10px] text-[#8696a0] font-semibold">{time}</span>
+                        <span className="text-[10px] text-text-secondary font-semibold">{time}</span>
                         {isMine && <Icons.CheckCheck size={16} className="text-[#53bdeb]" strokeWidth={2.5} />}
                     </div>
                 </div>
@@ -115,7 +133,7 @@ const PollBubble = ({ question, options, time, isMine, reaction }) => {
                         className={`absolute -bottom-2 ${isMine ? 'right-4' : 'left-4'} bg-bg-surface border border-border-main rounded-full px-2 py-0.5 shadow-xl flex items-center gap-1.5 z-30`}
                     >
                         <span className="text-[14px] leading-none">{reaction}</span>
-                        <span className="text-[11px] text-[#8696a0] font-bold">1</span>
+                        <span className="text-[11px] text-text-secondary font-bold">1</span>
                     </motion.div>
                 )}
             </AnimatePresence>

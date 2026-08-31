@@ -2,6 +2,7 @@
 // Shared primitives reused by DMInfoPanel, GroupInfoPanel, BroadcastInfoPanel
 import React from 'react';
 import { Icons } from '@constants/icons';
+import Avatar from '@shared/ui/display/Avatar';
 
 export const MEDIA_THUMBNAILS = [
   'https://picsum.photos/seed/11/150/150',
@@ -118,15 +119,14 @@ export const EncryptionBadge = () => (
   </div>
 );
 
-export const ProfileHero = ({ name, subtitle, avatar, isBlocked, isLocked, onAvatarClick, children }) => (
+export const ProfileHero = ({ name, subtitle, avatar, color, initials, isBlocked, isLocked, onAvatarClick, children }) => (
   <div className="flex flex-col items-center pt-8 pb-6 px-4 bg-bg-surface">
     <div className="relative mb-4">
       <div
-        className="w-28 h-28 rounded-full overflow-hidden ring-4 ring-accent/30 cursor-pointer hover:ring-accent/60 transition-all"
+        className="cursor-pointer hover:opacity-90 transition-all rounded-full"
         onClick={onAvatarClick}
       >
-        <img src={avatar} alt={name} className="w-full h-full object-cover"
-          onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=555&color=fff&size=300`; }} />
+        <Avatar src={avatar} name={name} initials={initials} color={color} size={112} className="ring-4 ring-accent/30 hover:ring-accent/60" />
       </div>
       {isBlocked && (
         <div className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center">

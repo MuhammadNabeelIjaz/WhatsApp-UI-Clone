@@ -4,11 +4,11 @@ import { Icons } from '@constants/icons';
 import { ContactItemSkeleton } from '@shared/ui/display/Skeletons';
 const BlockedContacts = ({ onBack }) => {
     const blockedList = [
-        { id: 1, phone: '+1 (623) 274-8405', img: null },
-        { id: 2, phone: '+880 1309-477057', img: null },
-        { id: 3, phone: '+880 1516-565889', img: 'https://placehold.co/100x100' },
-        { id: 4, phone: '+92 301 9122724', img: null },
-        { id: 5, phone: '+92 303 7775034', img: 'https://placehold.co/100x100' },
+        { id: 1, phone: '+1 555-010-0101', img: null },
+        { id: 2, phone: '+1 555-010-0102', img: null },
+        { id: 3, phone: '+1 555-010-0103', img: 'https://placehold.co/100x100' },
+        { id: 4, phone: '+1 555-010-0104', img: null },
+        { id: 5, phone: '+1 555-010-0105', img: 'https://placehold.co/100x100' },
     ];
 
     const isLoading = useFakeLoading(380);

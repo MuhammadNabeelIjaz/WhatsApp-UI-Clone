@@ -32,6 +32,18 @@ export const channels = [
         time: '2025-01-14T12:00:00Z',
         reactions: { '👍': 38000, '🔒': 15000 },
       },
+      {
+        id: 'p2a',
+        text: 'Now you can use multiple accounts on the same phone! Check out the settings.',
+        time: '2025-01-13T09:00:00Z',
+        reactions: { '🔒': 50000, '👍': 42000 },
+      },
+      {
+        id: 'p2b',
+        text: 'Did you know? You can pin up to 3 important chats to the top of your list.',
+        time: '2025-01-12T15:30:00Z',
+        reactions: { '✨': 12000, '❤️': 8000 },
+      }
     ],
   },
   {
@@ -58,6 +70,18 @@ export const channels = [
         text: 'Webb telescope captures stunning new images of the Orion Nebula 🌌',
         time: '2025-01-15T08:30:00Z',
         reactions: { '🚀': 89000, '😍': 67000 },
+      },
+      {
+        id: 'p3a',
+        text: 'The Artemis II crew is busy training for their mission around the Moon. 🚀',
+        time: '2025-01-14T14:15:00Z',
+        reactions: { '😍': 45000, '👏': 32000 },
+      },
+      {
+        id: 'p3b',
+        text: 'Did you catch the Perseid meteor shower? Share your photos!',
+        time: '2025-01-13T10:00:00Z',
+        reactions: { '😍': 55000 },
       },
     ],
   },
@@ -86,6 +110,18 @@ export const channels = [
         time: '2025-01-15T11:45:00Z',
         reactions: { '😮': 12000 },
       },
+      {
+        id: 'p4a',
+        text: 'Economy sees unexpected growth in Q1, markets rally worldwide.',
+        time: '2025-01-14T16:20:00Z',
+        reactions: { '🚀': 8500 },
+      },
+      {
+        id: 'p4b',
+        text: 'Technology special: How AI is transforming the healthcare sector.',
+        time: '2025-01-14T09:00:00Z',
+        reactions: { '👍': 15000 },
+      }
     ],
   },
   {
@@ -144,7 +180,8 @@ export const channels = [
     category: 'personal',
     lastPost: {
       text: 'Welcome to my channel! 👋',
-      time: '2025-01-15T12:00:00Z',
+      text: 'Check out my latest blog post linked in the bio!',
+      time: '2025-01-17T15:30:00Z',
     },
     unreadCount: 0,
     posts: [
@@ -154,9 +191,22 @@ export const channels = [
         time: '2025-01-15T12:00:00Z',
         reactions: {},
       },
+      {
+        id: 'my2',
+        text: 'I will be posting daily updates here. Stay tuned for more content.',
+        time: '2025-01-16T10:00:00Z',
+        reactions: {},
+      },
+      {
+        id: 'my3',
+        text: 'Check out my latest blog post linked in the bio!',
+        time: '2025-01-17T15:30:00Z',
+        reactions: {},
+      }
     ],
   },
   {
+    id: 'ch8',
     name: 'Crypto Daily',
     handle: '@cryptodaily',
     description: 'Market updates, analysis & trends in crypto and web3.',
@@ -180,6 +230,30 @@ export const channels = [
         time: '2025-01-15T07:00:00Z',
         reactions: { '🚀': 5600, '📈': 3200 },
       },
+      {
+        id: 'p5a',
+        text: 'Ethereum gas fees hit a new low. Is it time to transact? ⛽',
+        time: '2025-01-14T15:30:00Z',
+        reactions: { '👍': 4200 },
+      },
+      {
+        id: 'p5b',
+        text: 'Top 5 DeFi protocols you should be watching this week. 📊',
+        time: '2025-01-13T12:00:00Z',
+        reactions: { '✨': 8500 },
+      },
+      {
+        id: 'p5c',
+        text: 'New regulatory frameworks announced for stablecoins. What it means for you.',
+        time: '2025-01-12T09:45:00Z',
+        reactions: { '⚖️': 2100 },
+      },
+      {
+        id: 'p5d',
+        text: 'Market sentiment turns extremely greedy. Proceed with caution. ⚠️',
+        time: '2025-01-11T16:20:00Z',
+        reactions: { '🚨': 6700 },
+      }
     ],
   },
 ];

@@ -15,7 +15,7 @@ const DATA_OPTS = ["Photos", "Audio", "Videos", "Documents", "All media", "No me
 // Manage Storage sub-screen
 const ManageStorageScreen = ({ onBack }) => {
     const contacts = [
-        { name: "Nabeel Ijaz", size: "1.2 GB", msgs: 4821, img: "https://i.pravatar.cc/150?u=1" },
+        { name: "Muhammad Nabeel Ijaz", size: "1.2 GB", msgs: 4821, img: "https://i.pravatar.cc/150?u=1" },
         { name: "Ali Hamza", size: "342 MB", msgs: 1203, img: "https://i.pravatar.cc/150?u=2" },
         { name: "Home nisht...", size: "287 MB", msgs: 890, img: null },
         { name: "Info Groups", size: "180 MB", msgs: 456, img: null },

@@ -1,20 +1,20 @@
 export const COMMUNITIES_DATA = [
     {
         id: '1',
-        name: 'UMT ACM Student Chapter',
+        name: 'Global Tech Innovators',
         // Reliable avatar service - automatic initials
-        image: 'https://ui-avatars.com/api/?name=UMT+ACM&background=00a884&color=fff&size=128',
+        image: 'https://ui-avatars.com/api/?name=Global+Tech&background=00a884&color=fff&size=128',
         subGroups: [
             {
                 id: 'sg1',
-                name: 'ACM Members',
+                name: 'Core Team',
                 isJoined: true,
-                lastMsg: '+92 302 1402652: is in...',
+                lastMsg: '+1 555-010-0013: is in...',
                 time: '1:22 am'
             },
             {
                 id: 'sg1-ann',
-                name: 'UMT ACM Student Chapter',
+                name: 'Global Tech Innovators',
                 lastMsg: 'Announcement group',
                 time: '',
                 type: 'announcement',
@@ -22,14 +22,14 @@ export const COMMUNITIES_DATA = [
             },
             {
                 id: 'sg1-career',
-                name: 'Career Forum x ACM',
+                name: 'Career Forum',
                 lastMsg: '577 members',
                 memberCount: 577,
                 isJoined: false,
             },
             {
                 id: 'sg1-leet',
-                name: 'LeetCode',
+                name: 'Algorithms & DS',
                 lastMsg: 'Request to join',
                 isJoined: false,
                 requestToJoin: true,
@@ -49,8 +49,8 @@ export const COMMUNITIES_DATA = [
     },
     {
         id: '2',
-        name: 'España 🇪🇸 "Product\'s" 99',
-        image: 'https://ui-avatars.com/api/?name=Espana&background=e67e22&color=fff&size=128',
+        name: 'React Developers Network',
+        image: 'https://ui-avatars.com/api/?name=React+Devs&background=e67e22&color=fff&size=128',
         subGroups: [
             {
                 id: 'sg2',
@@ -61,8 +61,8 @@ export const COMMUNITIES_DATA = [
             },
             {
                 id: 'sg2-group',
-                name: 'France customer',
-                lastMsg: '+33 6 20 67 57 08 requested to join.',
+                name: 'Client Projects',
+                lastMsg: '+1 555-010-0014 requested to join.',
                 time: '23/12/2025',
                 isJoined: true,
             }
