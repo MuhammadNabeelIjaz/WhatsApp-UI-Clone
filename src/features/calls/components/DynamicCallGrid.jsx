@@ -10,9 +10,9 @@ const MAX_VISIBLE = 6;
 
 const ParticipantTile = ({ participant, size = 'md' }) => {
     const sizeClasses = {
-        lg: 'text-[32px]',
-        md: 'text-[22px]',
-        sm: 'text-[16px]',
+        lg: 'text-[40px] w-20 h-20',
+        md: 'text-[32px] w-16 h-16',
+        sm: 'text-[24px] w-12 h-12',
     };
     const initials = (participant?.name || 'U')
         .split(' ')
@@ -22,20 +22,24 @@ const ParticipantTile = ({ participant, size = 'md' }) => {
         .toUpperCase();
 
     return (
-        <div className="relative flex-1 min-w-0 rounded-xl overflow-hidden flex flex-col items-center justify-center"
-            style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', minHeight: '80px' }}>
-            <div className="w-14 h-14 rounded-full flex items-center justify-center font-bold"
+        <div className="relative flex-1 min-w-0 rounded-2xl overflow-hidden flex flex-col items-center justify-center bg-[#202c33]"
+            style={{ minHeight: '100px' }}>
+            <div className={`rounded-full flex items-center justify-center font-bold ${sizeClasses[size].split(' ')[1]} ${sizeClasses[size].split(' ')[2]}`}
                 style={{ background: participant?.color || '#3d3470' }}>
-                <span className={`${sizeClasses[size]} font-bold text-white`}>{initials}</span>
+                <span className={`${sizeClasses[size].split(' ')[0]} font-bold text-white`}>{initials}</span>
             </div>
-            <p className="text-white/80 text-[11px] font-medium mt-1.5 truncate max-w-[80%]">
-                {participant?.name || 'Unknown'}
-            </p>
-            {participant?.isMuted && (
-                <div className="absolute bottom-2 right-2 w-5 h-5 rounded-full bg-red-500/80 flex items-center justify-center">
-                    <Icons.MicOff size={10} className="text-white" />
-                </div>
-            )}
+            
+            {/* Overlay Name */}
+            <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between">
+                <span className="text-white text-[14px] font-medium truncate drop-shadow-md">
+                    {participant?.name || 'Unknown'}
+                </span>
+                {participant?.isMuted && (
+                    <div className="w-6 h-6 rounded-full bg-red-500/90 flex items-center justify-center shrink-0">
+                        <Icons.MicOff size={14} className="text-white" />
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
@@ -43,11 +47,11 @@ const ParticipantTile = ({ participant, size = 'md' }) => {
 const OverflowTile = ({ count, onClick }) => (
     <div
         onClick={onClick}
-        className="relative flex-1 min-w-0 rounded-xl overflow-hidden flex flex-col items-center justify-center cursor-pointer hover:brightness-125 transition-all active:scale-95"
-        style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', minHeight: '80px' }}
+        className="relative flex-1 min-w-0 rounded-2xl overflow-hidden flex flex-col items-center justify-center cursor-pointer hover:brightness-110 transition-all active:scale-95 bg-[#202c33]"
+        style={{ minHeight: '100px' }}
     >
-        <span className="text-white text-[24px] font-bold">+{count}</span>
-        <p className="text-white/60 text-[11px] mt-1">more</p>
+        <span className="text-white text-[28px] font-bold">+{count}</span>
+        <p className="text-white/60 text-[13px] mt-1 font-medium">more</p>
     </div>
 );
 
@@ -73,9 +77,9 @@ const DynamicCallGrid = ({ participants = [], onOverflowClick }) => {
     const { rows, size, overflow: hasOverflow } = getGridStyle();
 
     return (
-        <div className="flex flex-col gap-2 w-full h-full px-3 py-2">
+        <div className="flex flex-col gap-3 w-full h-full max-w-[900px] mx-auto px-4 pb-4">
             {rows.map((row, ri) => (
-                <div key={ri} className="flex gap-2 flex-1">
+                <div key={ri} className="flex gap-3 flex-1 h-full">
                     {row.map((p, pi) => (
                         <ParticipantTile key={p?.id ?? pi} participant={p} size={size} />
                     ))}
