@@ -46,7 +46,7 @@
   - [Building for production](#building-for-production)
 - [Project Structure](#project-structure)
 - [Architecture Notes](#architecture-notes)
-- [Roadmap](#roadmap)
+
 - [Contributing](#contributing)
 - [Disclaimer](#disclaimer)
 - [License](#license)
@@ -647,14 +647,6 @@ over from refactoring, with **zero importers found anywhere else in the codebase
   (often with a comment in the old file pointing to the replacement) and confirmed against
   both the import graph and the `vite.config.js` aliases. Safe cleanup candidates.
 
-### <u>Roadmap</u>
-
-- [ ] Real backend integration (service layer already stubs it — see Architecture Notes)
-- [ ] Multi-account switching
-- [ ] Add participants to an existing group (currently create-only)
-- [ ] Offline caching for the service worker
-- [ ] Automated tests
-- [ ] CI pipeline
 
 ### <u>Contributing</u>
 
