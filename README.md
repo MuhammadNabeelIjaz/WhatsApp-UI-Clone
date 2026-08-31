@@ -18,6 +18,10 @@
 </p>
 
 <p align="center">
+  <strong>🌍 Live Demo:</strong> <a href="https://wa-ui-clone-v1.netlify.app/">wa-ui-clone-v1.netlify.app</a>
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white" alt="React 19" />
   <img src="https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white" alt="Vite 7" />
   <img src="https://img.shields.io/badge/Redux_Toolkit-2-764ABC?logo=redux&logoColor=white" alt="Redux Toolkit" />
