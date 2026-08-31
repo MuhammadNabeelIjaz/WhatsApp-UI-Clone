@@ -32,7 +32,7 @@ export const initialState = {
     name:   'Muhammad Nabeel Ijaz',
     about:  'إِيَّاك نَعْبُدُ وَ إِيَّاكَ نَسْتَعِينُ',
     phone:  '+92 304 7662828',
-    avatar: 'https://i.ibb.co/Sbdchp3/Screenshot-2026-01-26-014349-1-removebg-preview.png',
+    avatar: 'https://media.licdn.com/dms/image/v2/D4D35AQEo7B-5pOKGjw/profile-framedphoto-shrink_400_400/B4DaBTLml_KkAU-/0/1788101946087?e=1788760800&v=beta&t=dLPyspBgwi_JtqnyQqrUR0CoUI_lcQRK8HEry44tR8Q',
   },
   chats: {
     enterSend:         false,
