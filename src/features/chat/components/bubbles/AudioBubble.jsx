@@ -4,7 +4,7 @@ import { Icons } from '@constants/icons';
 /**
  * AudioBubble — play/pause with animated progress bar.
  */
-const AudioBubble = ({ fileName, fileSize, duration, time, isMine, status }) => {
+const AudioBubble = ({ fileName, fileSize, duration, time, isMine, status, senderName, senderColor, onSenderClick }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [progress, setProgress] = useState(0); // 0-100
     const intervalRef = useRef(null);
@@ -57,12 +57,21 @@ const AudioBubble = ({ fileName, fileSize, duration, time, isMine, status }) => 
     };
 
     return (
-        <div className={`max-w-[85%] sm:max-w-[340px] p-2 rounded-2xl shadow-md border border-white/5
+        <div className={`max-w-[85%] sm:max-w-[340px] p-2 rounded-2xl shadow-md border border-border-main/20
             ${isMine ? 'self-end bg-bg-bubble-out rounded-tr-none' : 'self-start bg-bg-bubble-in rounded-tl-none'}`}
         >
+            {senderName && (
+                <div 
+                    className="text-[12.5px] font-semibold leading-tight mb-2 cursor-pointer hover:underline"
+                    style={{ color: senderColor || (isMine ? '#34b7f1' : '#e53935') }}
+                    onClick={onSenderClick}
+                >
+                    {senderName}
+                </div>
+            )}
             <div className="flex items-center gap-3">
                 {/* Icon */}
-                <div className="w-12 h-12 rounded-full bg-[#ff7a19] flex items-center justify-center text-white shrink-0 shadow-lg">
+                <div className="w-12 h-12 rounded-full bg-[#ff7a19] flex items-center justify-center text-text-primary shrink-0 shadow-lg">
                     <Icons.Headphones size={24} />
                 </div>
 
@@ -74,14 +83,14 @@ const AudioBubble = ({ fileName, fileSize, duration, time, isMine, status }) => 
                             className="transition-transform active:scale-90 shrink-0"
                         >
                             {isPlaying
-                                ? <Icons.Pause size={22} fill={isMine ? 'white' : '#8696a0'} className={isMine ? 'text-white' : 'text-[#8696a0]'} />
-                                : <Icons.Play  size={22} fill={isMine ? 'white' : '#8696a0'} className={isMine ? 'text-white' : 'text-[#8696a0]'} />
+                                ? <Icons.Pause size={22} fill={isMine ? 'white' : '#8696a0'} className={isMine ? 'text-text-primary' : 'text-text-secondary'} />
+                                : <Icons.Play  size={22} fill={isMine ? 'white' : '#8696a0'} className={isMine ? 'text-text-primary' : 'text-text-secondary'} />
                             }
                         </button>
 
                         {/* Seekable progress bar */}
                         <div
-                            className="h-[4px] flex-1 bg-white/20 rounded-full overflow-hidden cursor-pointer relative"
+                            className="h-[4px] flex-1 bg-border-main/50 rounded-full overflow-hidden cursor-pointer relative"
                             onClick={handleSeek}
                         >
                             <div
@@ -90,16 +99,16 @@ const AudioBubble = ({ fileName, fileSize, duration, time, isMine, status }) => 
                             />
                         </div>
 
-                        <span className="text-[10px] text-white/50 shrink-0 min-w-[30px] text-right">
+                        <span className="text-[10px] text-text-secondary/70 shrink-0 min-w-[30px] text-right">
                             {fmt(currentSec)}
                         </span>
                     </div>
 
                     <div className="px-1">
-                        <h4 className="text-[13px] font-medium text-white truncate">
+                        <h4 className="text-[13px] font-medium text-text-primary truncate">
                             {fileName || 'AUD-20260310-WA0003.mp3'}
                         </h4>
-                        <div className="flex items-center gap-2 opacity-60 text-[11px] text-white/80">
+                        <div className="flex items-center gap-2 opacity-60 text-[11px] text-text-primary/90">
                             <span>{duration || '0:06'}</span>
                             <span>•</span>
                             <span>{fileSize || '16 KB'}</span>
@@ -110,11 +119,11 @@ const AudioBubble = ({ fileName, fileSize, duration, time, isMine, status }) => 
 
             {/* Footer */}
             <div className="flex justify-end items-center gap-1 mt-1 px-1">
-                <span className="text-[10px] opacity-60 text-white/70 font-medium">{time}</span>
+                <span className="text-[10px] opacity-60 text-text-secondary font-medium">{time}</span>
                 {isMine && (
                     status === 'read'
                         ? <Icons.CheckCheck size={15} className="text-[#53bdeb]" strokeWidth={2.5} />
-                        : <Icons.CheckCheck size={15} className="opacity-60 text-white/70" strokeWidth={2.5} />
+                        : <Icons.CheckCheck size={15} className="opacity-60 text-text-secondary" strokeWidth={2.5} />
                 )}
             </div>
         </div>

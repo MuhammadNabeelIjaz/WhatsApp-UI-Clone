@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
  * WhatsApp Premium Clone - Image Bubble (Upgraded & Working)
  * Features: High-fidelity zoom, Glassmorphism download, and Reaction badges.
  */
-const ImageBubble = ({ src, caption, time, isMine, status, reaction }) => {
+const ImageBubble = ({ src, caption, time, isMine, status, reaction, senderName, senderColor, onSenderClick }) => {
     return (
         <div className={`relative flex flex-col ${isMine ? 'items-end' : 'items-start'} mb-6 group`}>
             <div
@@ -17,10 +17,21 @@ const ImageBubble = ({ src, caption, time, isMine, status, reaction }) => {
                     }
                 `}
             >
+                {/* Sender Name */}
+                {senderName && (
+                    <div 
+                        className="text-[12.5px] font-semibold leading-tight mb-1 mt-1 ml-1 cursor-pointer hover:underline"
+                        style={{ color: senderColor || (isMine ? '#34b7f1' : '#e53935') }}
+                        onClick={onSenderClick}
+                    >
+                        {senderName}
+                    </div>
+                )}
+
                 {/* --- Image Container --- */}
                 <div className="relative rounded-xl overflow-hidden cursor-pointer group/img">
                     <img
-                        src={src || "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=600"}
+                        src={src || "https://placehold.co/600x400/png"}
                         className="w-full object-cover max-h-[420px] min-h-[150px] transition-transform duration-700 group-hover/img:scale-105"
                         alt="Shared media"
                         loading="lazy"

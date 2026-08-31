@@ -16,12 +16,12 @@ const ChatListItem = ({
 }) => {
     const longPressProps = useLongPress(onLongPress);
 
-    // ── Data normalisation ───────────────────────────────────────────────────
-    const lastMsgText = typeof chat.lastMessage === 'object'
-        ? (chat.lastMessage?.text ?? '')
-        : (chat.lastMessage ?? '');
+    const msgObj = typeof chat.lastMessage === 'object' ? chat.lastMessage : null;
+    const lastMsgText = msgObj ? (msgObj.text ?? '') : (chat.lastMessage ?? '');
+    const msgType = msgObj?.type; // 'image', 'document' etc.
+    const senderPrefix = msgObj?.from && msgObj.from !== 'me' && chat.isGroup ? `${msgObj.from}: ` : '';
 
-    const timeText = chat.time ?? chat.lastMessage?.time ?? '';
+    const timeText = chat.time ?? msgObj?.time ?? '';
 
     const initials = (chat.initials ||
         (chat.name || '?').split(' ').map(w => w[0]).join('')).slice(0, 2).toUpperCase();
@@ -32,9 +32,9 @@ const ChatListItem = ({
         <div
             {...longPressProps}
             onClick={onSelect}
-            className={`flex items-center px-4 py-3 cursor-pointer transition-all duration-150 relative
+            className={`flex items-center px-4 py-3 cursor-pointer transition-all duration-150 relative mx-2 rounded-xl my-0.5
                 ${isSelected
-                    ? 'bg-accent/10 mx-2 rounded-xl my-0.5 shadow-sm'
+                    ? 'bg-accent/10 shadow-sm'
                     : isCurrentChat ? 'bg-bg-hover/80'
                         : 'hover:bg-bg-hover active:bg-bg-hover/70'}
             `}
@@ -119,17 +119,28 @@ const ChatListItem = ({
                 {/* Row 2: last message + badges */}
                 <div className="flex justify-between items-center mt-[2px] gap-2">
                     <div className="flex items-center gap-1 text-[13.5px] text-text-secondary truncate flex-1 min-w-0">
-                        {/* Read receipt for sent messages */}
-                        {chat.status === 'read' && !chat.isGroup && (
-                            <Icons.CheckCheck size={15} className="text-[#53bdeb] shrink-0" />
+                        {chat.isTyping ? (
+                            <span className="text-accent font-medium tracking-wide">typing...</span>
+                        ) : (
+                            <>
+                                {/* Read receipt for sent messages */}
+                                {chat.status === 'read' && !chat.isGroup && (
+                                    <Icons.CheckCheck size={15} className="text-[#53bdeb] shrink-0" />
+                                )}
+                                {chat.status === 'delivered' && !chat.isGroup && (
+                                    <Icons.CheckCheck size={15} className="text-text-secondary/60 shrink-0" />
+                                )}
+                                {chat.status === 'sent' && !chat.isGroup && (
+                                    <Icons.Check size={15} className="text-text-secondary/60 shrink-0" />
+                                )}
+                                <span className="truncate flex items-center gap-1">
+                                    {senderPrefix && <span>{senderPrefix}</span>}
+                                    {msgType === 'image' && <Icons.Image size={14} className="text-text-secondary shrink-0" />}
+                                    {msgType === 'document' && <Icons.FileText size={14} className="text-text-secondary shrink-0" />}
+                                    {lastMsgText}
+                                </span>
+                            </>
                         )}
-                        {chat.status === 'delivered' && !chat.isGroup && (
-                            <Icons.CheckCheck size={15} className="text-text-secondary/60 shrink-0" />
-                        )}
-                        {chat.status === 'sent' && !chat.isGroup && (
-                            <Icons.Check size={15} className="text-text-secondary/60 shrink-0" />
-                        )}
-                        <span className="truncate">{lastMsgText}</span>
                     </div>
 
                     {/* Right badges */}
@@ -137,6 +148,12 @@ const ChatListItem = ({
                         {/* Mute bell icon */}
                         {chat.isMuted && !isSelected && (
                             <Icons.BellOff size={13} className="text-text-secondary/50" />
+                        )}
+                        {/* Mention badge */}
+                        {chat.isMentioned && !isSelected && (
+                            <div className="w-[20px] h-[20px] rounded-full bg-bg-surface flex items-center justify-center text-accent text-[14px] font-bold">
+                                @
+                            </div>
                         )}
                         {/* Unread count */}
                         {(chat.unreadCount > 0 || chat.isManuallyUnread) && !isSelected && (() => {

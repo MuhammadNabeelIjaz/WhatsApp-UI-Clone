@@ -151,7 +151,7 @@ const EventCreation = ({ onClose, onSend }) => {
                 <button
                     disabled={!canSend}
                     onClick={handleSend}
-                    className={`px-6 py-2.5 rounded-full font-semibold text-[15px] bg-accent text-white transition-all active:scale-95 ${
+                    className={`px-6 py-2.5 rounded-full font-semibold text-[15px] bg-accent text-text-primary transition-all active:scale-95 ${
                         canSend ? 'opacity-100' : 'opacity-40 cursor-not-allowed'
                     }`}
                 >

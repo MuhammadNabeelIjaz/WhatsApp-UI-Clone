@@ -14,9 +14,20 @@ const SwipeableMessage = ({
     selectionModeActive,
     onToggleSelect,
     onSwipeToReply,
-    onContextMenu
+    onContextMenu,
+    avatarUrl,
+    isMine,
+    senderName,
+    senderColor
 }) => {
     const controls = useAnimation();
+
+    const getInitials = (name) => {
+        if (!name) return '?';
+        const parts = name.trim().split(' ');
+        if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+        return name.substring(0, 2).toUpperCase();
+    };
 
     const handleDragEnd = (event, info) => {
         const offset = info.offset.x;
@@ -82,15 +93,31 @@ const SwipeableMessage = ({
                         </motion.button>
                     )}
 
+                    {/* Bubble Container */}
                     <motion.div
-                        className="relative z-10 w-full"
                         drag={selectionModeActive ? false : "x"}
                         dragConstraints={{ left: 0, right: 70 }}
                         dragElastic={0.2}
                         onDragEnd={handleDragEnd}
                         animate={controls}
+                        className={`flex w-full ${justifyClass} relative z-10 gap-2 items-start`}
                     >
-                        {children}
+                        {/* Avatar for incoming messages */}
+                        {!isMine && (
+                            <div 
+                                className="hidden md:flex w-[28px] h-[28px] rounded-full shrink-0 shadow-sm border border-border-main/50 mt-0.5 overflow-hidden items-center justify-center text-[11px] font-medium text-white"
+                                style={{ backgroundColor: !avatarUrl && senderColor ? senderColor : 'var(--bg-skeleton)' }}
+                            >
+                                {avatarUrl ? (
+                                    <img src={avatarUrl} alt="avatar" className="w-full h-full object-cover" />
+                                ) : (
+                                    <span>{getInitials(senderName)}</span>
+                                )}
+                            </div>
+                        )}
+                        <div className="relative max-w-full">
+                           {children}
+                        </div>
                     </motion.div>
                 </div>
             </div>
