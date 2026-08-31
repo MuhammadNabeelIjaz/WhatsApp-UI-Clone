@@ -154,6 +154,13 @@ const chatSlice = createSlice({
     // ── Active chat ───────────────────────────────────────────────────────
     setActiveChat: (state, action) => {
       state.activeChat = action.payload;
+      if (action.payload) {
+        const chat = state.items.find(c => c.id === action.payload);
+        if (chat) {
+          chat.unreadCount = 0;
+          chat.hasMention = false;
+        }
+      }
     },
 
     // ── Favorite ──────────────────────────────────────────────────────────

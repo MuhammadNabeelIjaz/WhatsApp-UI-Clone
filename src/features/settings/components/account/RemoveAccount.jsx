@@ -61,7 +61,7 @@ const RemoveAccount = ({ onBack }) => {
                     <div className="flex flex-col gap-5 flex-1">
                         <div>
                             <h3 className="text-[16px] text-text-primary">Remove from this device:</h3>
-                            <p className="text-[16px] text-text-primary font-medium mt-1">+92 304 7662828</p>
+                            <p className="text-[16px] text-text-primary font-medium mt-1">+1 555-010-9999</p>
                         </div>
                         <button className="bg-[#ef5350] text-white px-6 py-2.5 rounded-full font-medium text-[14px] w-fit shadow-md active:scale-95 transition-transform">
                             Remove account

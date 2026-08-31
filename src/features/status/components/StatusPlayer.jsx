@@ -127,7 +127,7 @@ const StatusPlayer = ({ users, currentUserIndex, onClose, onUpdateSeen, onUserCh
     const currentSlide = statusData.slides[slideIndex] || {};
 
     return (
-        <div className="fixed inset-0 z-[500] bg-black flex items-center justify-center select-none overflow-hidden touch-none">
+        <div className="fixed inset-0 z-[9999] bg-black flex items-center justify-center select-none overflow-hidden touch-none">
             <div className="absolute inset-0 bg-black/90 hidden md:block" onClick={onClose} />
 
             <div className="relative w-full h-full md:w-[420px] md:max-h-[850px] md:h-[95vh] md:rounded-2xl overflow-hidden bg-[#0b141a] shadow-2xl z-[510]">
@@ -202,7 +202,10 @@ const StatusPlayer = ({ users, currentUserIndex, onClose, onUpdateSeen, onUserCh
                     ) : currentSlide.type === 'image' ? (
                         <img src={currentSlide.url} className="w-full h-full object-contain" onError={() => setLoadingError(true)} alt="Status" />
                     ) : (
-                        <div className="w-full h-full flex flex-col items-center justify-center px-10 text-center bg-[#5c4033]">
+                        <div 
+                            className="w-full h-full flex flex-col items-center justify-center px-10 text-center"
+                            style={{ backgroundColor: currentSlide.bgColor || '#5c4033' }}
+                        >
                             <p className="text-2xl text-white font-medium leading-relaxed">{currentSlide.content}</p>
                         </div>
                     )}

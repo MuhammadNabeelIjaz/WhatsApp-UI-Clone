@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { flushSync } from 'react-dom';
 import { colors } from '@core/theme/colors';
 import logger from '@core/utils/logger';
 
@@ -22,19 +23,69 @@ export const ThemeProvider = ({ children }) => {
 
     const [isDarkMode, setIsDarkMode] = useState(() => getIsDark(localStorage.getItem('themeMode') || 'system'));
 
-    // setThemeMode: persist and update state
-    const setThemeMode = (val) => {
+    // setThemeModeRaw: persist and update state without animation
+    const setThemeModeRaw = (val) => {
         logger.event('ThemeContext', 'theme_mode_change', { from: themeMode, to: val });
         localStorage.setItem('themeMode', val);
         setThemeModeState(val);
         setIsDarkMode(getIsDark(val));
     };
 
+    const applyThemeWithAnimation = (newMode, e) => {
+        const isDark = getIsDark(newMode);
+        if (isDarkMode === isDark) {
+            setThemeModeRaw(newMode);
+            return;
+        }
+
+        // We check if e exists, has clientX (mouse/touch event), and View Transitions API is supported
+        if (!e || e.clientX === undefined || !document.startViewTransition) {
+            setThemeModeRaw(newMode);
+            return;
+        }
+
+        const x = e.clientX;
+        const y = e.clientY;
+        const endRadius = Math.hypot(
+            Math.max(x, window.innerWidth - x),
+            Math.max(y, window.innerHeight - y)
+        );
+
+        const transition = document.startViewTransition(() => {
+            flushSync(() => {
+                setThemeModeRaw(newMode);
+            });
+        });
+
+        transition.ready.then(() => {
+            const clipPath = [
+                `circle(0px at ${x}px ${y}px)`,
+                `circle(${endRadius}px at ${x}px ${y}px)`
+            ];
+            
+            document.documentElement.animate(
+                {
+                    clipPath: clipPath,
+                },
+                {
+                    duration: 1000,
+                    easing: 'ease-out',
+                    pseudoElement: '::view-transition-new(root)',
+                }
+            );
+        });
+    };
+
+    // Exported setThemeMode (can accept an event)
+    const setThemeMode = (val, e) => {
+        applyThemeWithAnimation(val, e);
+    };
+
     // Keep toggleTheme working (toggle dark/light)
-    const toggleTheme = () => {
+    const toggleTheme = (e) => {
         const newMode = isDarkMode ? 'light' : 'dark';
         logger.event('ThemeContext', 'toggle_theme', { newMode });
-        setThemeMode(newMode);
+        applyThemeWithAnimation(newMode, e);
     };
 
     // Listen to system preference changes when themeMode === 'system'
@@ -46,13 +97,23 @@ export const ThemeProvider = ({ children }) => {
         return () => mq.removeEventListener('change', handler);
     }, [themeMode]);
 
-    // Apply class to root element
+    // Apply class to root element and update PWA title bar color
     useEffect(() => {
         const root = window.document.documentElement;
+        
+        let metaThemeColor = document.querySelector('meta[name="theme-color"]');
+        if (!metaThemeColor) {
+            metaThemeColor = document.createElement('meta');
+            metaThemeColor.name = "theme-color";
+            document.head.appendChild(metaThemeColor);
+        }
+
         if (isDarkMode) {
             root.classList.remove('light');
+            metaThemeColor.setAttribute('content', '#111b21'); // dark surface color
         } else {
             root.classList.add('light');
+            metaThemeColor.setAttribute('content', '#f0f2f5'); // exact color for PWA title bar matching mini sidebar
         }
     }, [isDarkMode]);
 

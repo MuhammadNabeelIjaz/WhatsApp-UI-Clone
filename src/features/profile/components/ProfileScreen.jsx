@@ -206,7 +206,7 @@ const ProfileScreen = ({ onBack }) => {
 const ProfileRow = ({ icon, label, value, description, isLink, onClick }) => (
     <div
         onClick={onClick}
-        className="flex items-start px-6 py-4 hover:bg-bg-hover cursor-pointer transition-colors group"
+        className="flex items-start px-4 py-3 mx-2 my-0.5 rounded-xl hover:bg-bg-hover cursor-pointer transition-colors group"
     >
         <div className="mt-1 mr-8 flex-shrink-0 text-text-secondary group-hover:text-accent transition-colors">
             {icon}

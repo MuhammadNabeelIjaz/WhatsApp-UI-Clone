@@ -66,9 +66,9 @@ const ChatsSettingsScreen = ({ onBack }) => {
     const themeOptions = ['System default', 'Light', 'Dark'];
     const fontOptions = ['Small', 'Medium', 'Large'];
 
-    const handleThemeSelect = (option) => {
+    const handleThemeSelect = (option, e) => {
         const val = option === 'System default' ? 'system' : option.toLowerCase();
-        setThemeMode(val);
+        setThemeMode(val, e);
         dispatch(showToast(`Theme set to ${option}`, 'info'));
     };
 

@@ -42,12 +42,12 @@ const UserInfoPanel = ({ chat, onBack, onStartChat }) => {
   const renderPanel = () => {
     if (chat?.isChannel) return (
       <React.Suspense fallback={<UserInfoSkeleton />}>
-        <ChannelInfoScreen chat={chat} onBack={onBack} />
+        <ChannelInfoScreen channel={chat} onBack={onBack} />
       </React.Suspense>
     );
     if (chat?.isCommunity || chat?.isCommunityAnnouncement) return (
       <React.Suspense fallback={<UserInfoSkeleton />}>
-        <CommunityInfoScreen chat={chat} onBack={onBack} />
+        <CommunityInfoScreen community={chat} onBack={onBack} />
       </React.Suspense>
     );
     if (chat?.isGroup) return <GroupInfoPanel {...sharedProps} />;

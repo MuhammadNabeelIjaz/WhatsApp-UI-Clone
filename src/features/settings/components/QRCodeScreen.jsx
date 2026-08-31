@@ -60,7 +60,7 @@ const QRCodeScreen = ({ onBack }) => {
                         {/* Profile float */}
                         <div className="relative mb-[-32px] z-10 shadow-lg">
                             <img
-                                src="https://i.ibb.co/Sbdchp3/Screenshot-2026-01-26-014349-1-removebg-preview.png"
+                                src="https://media.licdn.com/dms/image/v2/D4D35AQEo7B-5pOKGjw/profile-framedphoto-shrink_400_400/B4DaBTLml_KkAU-/0/1788101946087?e=1788760800&v=beta&t=dLPyspBgwi_JtqnyQqrUR0CoUI_lcQRK8HEry44tR8Q"
                                 className="w-16 h-16 rounded-full border-4 border-bg-surface object-cover"
                                 alt="Profile"
                             />
@@ -79,7 +79,7 @@ const QRCodeScreen = ({ onBack }) => {
                                 />
                             </div>
 
-                            <p className="mt-4 text-[12px] text-text-secondary opacity-60">+92 304 7662828</p>
+                            <p className="mt-4 text-[12px] text-text-secondary opacity-60">+1 555-010-9999</p>
                         </div>
 
                         <p className="mt-6 text-center text-[13px] leading-relaxed text-text-secondary opacity-60 italic">

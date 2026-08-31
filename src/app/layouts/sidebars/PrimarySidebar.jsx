@@ -10,7 +10,7 @@ const PrimarySidebar = ({ activeTab, setActiveTab, isDesktop }) => {
     // --- Desktop Sidebar UI ---
     if (isDesktop) {
         return (
-            <div className="flex w-[64px] h-full bg-bg-surface border-r border-border-main/30 flex-col items-center py-5 gap-4 z-[200] shrink-0 relative shadow-[2px_0_8px_rgba(0,0,0,0.06)]">
+            <div className="flex w-[64px] h-full bg-bg-mini-sidebar border-r border-border-main/30 flex-col items-center py-5 gap-4 z-[200] shrink-0 relative shadow-[2px_0_8px_rgba(0,0,0,0.06)]">
                 {/* Subtle right-edge highlight for crisp visual separation */}
                 <div className="absolute top-0 right-0 w-[1px] h-full bg-gradient-to-b from-transparent via-border-main/40 to-transparent pointer-events-none" />
                 <div className="flex flex-col gap-1 flex-1 w-full items-center z-10">
@@ -51,7 +51,7 @@ const PrimarySidebar = ({ activeTab, setActiveTab, isDesktop }) => {
                         >
                             <div className="w-full h-full rounded-full border-2 border-bg-surface overflow-hidden bg-accent/20 flex items-center justify-center">
                                 <img
-                                    src="https://i.ibb.co/Sbdchp3/Screenshot-2026-01-26-014349-1-removebg-preview.png"
+                                    src="https://media.licdn.com/dms/image/v2/D4D35AQEo7B-5pOKGjw/profile-framedphoto-shrink_400_400/B4DaBTLml_KkAU-/0/1788101946087?e=1788760800&v=beta&t=dLPyspBgwi_JtqnyQqrUR0CoUI_lcQRK8HEry44tR8Q"
                                     alt="Profile"
                                     className="w-full h-full object-cover"
                                     onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
@@ -70,7 +70,7 @@ const PrimarySidebar = ({ activeTab, setActiveTab, isDesktop }) => {
 
     // --- Mobile Bottom Tab UI ---
     return (
-        <nav className="flex h-[65px] w-full bg-bg-surface border-t border-border-main items-center justify-between px-1 pb-safe z-[200]">
+        <nav className="flex h-[65px] w-full bg-bg-mini-sidebar border-t border-border-main items-center justify-between px-1 pb-safe z-[200]">
             <NavButton isMobile label="Chats" icon={<Icons.MessageCircle size={20} />} active={activeTab === ROUTES.CHATS} onClick={() => setActiveTab(ROUTES.CHATS)} />
             <NavButton isMobile label="Updates" icon={<Icons.CircleDot size={20} />} active={activeTab === ROUTES.STATUS} onClick={() => setActiveTab(ROUTES.STATUS)} />
             <NavButton isMobile label="Communities" icon={<Icons.Users size={20} />} active={activeTab === ROUTES.COMMUNITIES} onClick={() => setActiveTab(ROUTES.COMMUNITIES)} />

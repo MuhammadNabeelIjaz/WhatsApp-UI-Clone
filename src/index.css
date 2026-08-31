@@ -14,6 +14,8 @@
     --color-bg-bubble-out: var(--bg-bubble-out);
     --color-bg-bubble-in: var(--bg-bubble-in);
     --color-bg-chat-canvas: var(--bg-chat-canvas);
+    --color-bg-chat-list: var(--bg-chat-list);
+    --color-bg-mini-sidebar: var(--bg-mini-sidebar);
 
     --color-border-main: var(--border);
 
@@ -51,6 +53,8 @@
     --chat-font-size: 15px;
     --bg-bubble-in: #202c33;
     --bg-chat-canvas: #0b141a;
+    --bg-chat-list: #111b21;
+    --bg-mini-sidebar: #111b21;
 
     --text-primary: #e9edef;
     --text-secondary: #8696a0;
@@ -81,9 +85,11 @@
     --bg-main: #FFFFFF;
     --bg-chat-canvas: #EFEAE2;
     --bg-surface: #FFFFFF;
-    --bg-hover: #F0F2F5;
+    --bg-chat-list: #FFFFFF;
+    --bg-mini-sidebar: #F0F2F5;
+    --bg-hover: #F5F6F6;
     --bg-input: #F0F2F5;
-    --bg-input-hover: #E9EDEF;
+    --bg-input-hover: #FFFFFF;
     --bg-skeleton: #E9EDEF;
     --bg-bubble-out: #D9FDD3;
     --bg-bubble-in: #FFFFFF;
@@ -100,13 +106,13 @@
     --accent-banner-bg: #D9FDD3;
 
     /* Light Shades */
-    --status-success: #00A884;
+    --status-success: #53bdeb; /* Exact blue tick color from target image */
     --status-error: #ea0038;
     --status-unread: #25D366;
     --status-typing: #00A884;
     --border: #E9EDEF;
 
-    --glass-bg: rgba(255, 255, 255, 0.8);
+    --glass-bg: rgba(255, 255, 255, 0.85);
 }
 
 /* 5. BASE STYLES */
@@ -261,4 +267,17 @@
 @keyframes slideInUp {
     from { transform: translateY(100%); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
+}
+
+/* 7. VIEW TRANSITIONS FOR THEME TOGGLE */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+    z-index: 1;
+}
+::view-transition-new(root) {
+    z-index: 9999;
 }
