@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Icons } from '@constants/icons';
 
 /**
@@ -6,6 +6,56 @@ import { Icons } from '@constants/icons';
  * Yeh screen tab dikhti hai jab desktop par koi chat select na ho.
  */
 const ChatListScreen = () => {
+    const [deferredPrompt, setDeferredPrompt] = useState(null);
+    const [isStandalone, setIsStandalone] = useState(false);
+    const [justInstalled, setJustInstalled] = useState(false);
+
+    useEffect(() => {
+        setIsStandalone(
+            window.matchMedia('(display-mode: standalone)').matches || 
+            window.navigator.standalone
+        );
+        const handleBeforeInstallPrompt = (e) => {
+            // Prevent Chrome 67 and earlier from automatically showing the prompt
+            e.preventDefault();
+            // Stash the event so it can be triggered later.
+            setDeferredPrompt(e);
+        };
+
+        const handleAppInstalled = () => {
+            setJustInstalled(true);
+            setDeferredPrompt(null);
+        };
+
+        window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+        window.addEventListener('appinstalled', handleAppInstalled);
+        
+        return () => {
+            window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+            window.removeEventListener('appinstalled', handleAppInstalled);
+        };
+    }, []);
+
+    const handleInstallClick = async () => {
+        if (isStandalone) {
+            alert('App is already opened and running!');
+            return;
+        }
+        if (justInstalled) {
+            alert('App has been installed successfully. Please open it from your apps menu or home screen.');
+            return;
+        }
+        if (!deferredPrompt) {
+            alert('WhatsApp is already installed on your device. Please open it from your home screen or apps list.');
+            return;
+        }
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            setDeferredPrompt(null);
+        }
+    };
+
     return (
         <div className="hidden md:flex flex-col items-center justify-center h-full w-full bg-bg-chat-canvas border-l border-border-main/5 relative overflow-hidden">
 
@@ -40,8 +90,11 @@ const ChatListScreen = () => {
                 </p>
 
                 {/* Call to Action */}
-                <button className="bg-accent hover:bg-accent-hover text-black px-8 py-2.5 rounded-full font-semibold text-[14px] transition-all hover:scale-[1.03] active:scale-95 mb-24 shadow-md animate-fade-in">
-                    Get from Microsoft Store
+                <button 
+                    onClick={handleInstallClick}
+                    className="bg-accent hover:bg-accent-hover text-black px-8 py-2.5 rounded-full font-semibold text-[14px] transition-all hover:scale-[1.03] active:scale-95 mb-24 shadow-md animate-fade-in"
+                >
+                    {isStandalone ? "Already Opened" : justInstalled ? "App Installed" : "Install App"}
                 </button>
 
                 {/* Encryption Notice */}
