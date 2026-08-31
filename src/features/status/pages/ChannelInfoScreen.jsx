@@ -11,6 +11,7 @@ import { selectChannels } from '@core/store/slices/channelSlice';
 import { followChannel, unfollowChannel, addChannelPost } from '@core/store/slices/channelSlice';
 import { showToast } from '@core/store/slices/uiSlice';
 import { ImageViewer } from '@shared/ui/display';
+import Avatar from '@shared/ui/display/Avatar';
 import { ChannelInfoSkeleton } from '@shared/ui/display/Skeletons';
 import ChannelHeader, { ChannelStickyBar } from '../components/ChannelHeader';
 import ChannelPostList, { ChannelSearchBar } from '../components/ChannelPostList';
@@ -243,11 +244,13 @@ const ChannelInfoScreen = ({ channel, onBack, onUnfollow }) => {
                     <div className="bg-bg-surface rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden animate-zoom-in" onClick={e => e.stopPropagation()}>
                         <div className="px-6 pt-6 pb-4">
                             <div className="flex justify-center mb-4">
-                                <div className="w-14 h-14 rounded-full overflow-hidden" style={{ background: channel.avatarColor || '#00a884' }}>
-                                    {channel.avatar
-                                        ? <img src={channel.avatar} className="w-full h-full object-cover" />
-                                        : <div className="w-full h-full flex items-center justify-center text-white font-bold text-xl">{channel.initials || channel.name?.slice(0, 2).toUpperCase()}</div>}
-                                </div>
+                                <Avatar
+                                    src={channel.avatar}
+                                    name={channel.name}
+                                    initials={channel.initials}
+                                    color={channel.avatarColor}
+                                    size={56}
+                                />
                             </div>
                             <h3 className="text-[17px] font-semibold text-text-primary text-center mb-1">Unfollow {channel.name}?</h3>
                             <p className="text-[13px] text-text-secondary text-center leading-relaxed">You'll stop receiving updates from this channel.</p>

@@ -12,16 +12,16 @@ import {
 import { DisappearingModal, LockChatModal } from './InfoPanelModals';
 import ConfirmDialog from '@shared/ui/feedback/ConfirmDialog';
 
-const ActiveCallScreen = React.lazy(() =>
-  import('@features/calls').then(m => ({ default: m.ActiveCallScreen }))
-);
+import Avatar from '@shared/ui/display/Avatar';
+
+const ActiveCallScreen = React.lazy(() => import('@features/calls/pages/ActiveCallScreen'));
 
 const GroupInfoPanel = ({ chat, onBack, onShowMediaLinksDoc }) => {
   const dispatch = useDispatch();
   const contacts = useSelector(selectContacts);
 
   const groupName = chat?.name || 'Group';
-  const groupAvatar = chat?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(groupName)}&background=random&size=300`;
+  const groupAvatar = chat?.avatar || null;
 
   const groupMembers = useMemo(() => {
     const rawMembers = chat?.members || [];
@@ -91,7 +91,7 @@ const GroupInfoPanel = ({ chat, onBack, onShowMediaLinksDoc }) => {
       <div className="flex-1 overflow-y-auto custom-scrollbar">
         <ProfileHero
           name={groupName} subtitle={`${groupMemberCount} member${groupMemberCount !== 1 ? 's' : ''}`}
-          avatar={groupAvatar} isLocked={isLocked}
+          avatar={groupAvatar} color={chat?.avatarColor} initials={chat?.initials} isLocked={isLocked}
           onAvatarClick={() => {}}
         >
           <div className="flex items-center gap-6 mt-5">
@@ -125,13 +125,15 @@ const GroupInfoPanel = ({ chat, onBack, onShowMediaLinksDoc }) => {
           </div>
           {(showAllMembers ? groupMembers : groupMembers.slice(0, 5)).map((member) => {
             const isAdmin = groupAdmins.includes(member.id);
-            const avatar = member.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name || 'User')}&background=${(member.avatarColor || '#555').replace('#', '')}&color=fff&size=80`;
             return (
               <div key={member.id} className="flex items-center gap-3 px-5 py-3 hover:bg-bg-hover transition-colors">
-                <div className="w-10 h-10 rounded-full overflow-hidden shrink-0">
-                  <img src={avatar} alt={member.name} className="w-full h-full object-cover"
-                    onError={e => { e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name || 'U')}&background=555&color=fff&size=80`; }} />
-                </div>
+                <Avatar
+                  src={member.avatar}
+                  name={member.name || 'User'}
+                  initials={member.initials}
+                  color={member.avatarColor}
+                  size={40}
+                />
                 <div className="flex-1 min-w-0">
                   <p className="text-[15px] font-medium text-text-primary truncate">{member.id === 'me' ? 'You' : member.name}</p>
                   <p className="text-[12px] text-text-secondary truncate">{member.status || member.about || ''}</p>

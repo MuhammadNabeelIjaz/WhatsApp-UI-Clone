@@ -10,12 +10,13 @@ import {
 } from './InfoPanelShared';
 import { DisappearingModal, LockChatModal } from './InfoPanelModals';
 import ConfirmDialog from '@shared/ui/feedback/ConfirmDialog';
+import Avatar from '@shared/ui/display/Avatar';
 
 const BroadcastInfoPanel = ({ chat, onBack, onShowMediaLinksDoc }) => {
   const dispatch = useDispatch();
 
   const broadcastName = chat?.name || 'Broadcast';
-  const broadcastAvatar = chat?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(broadcastName)}&background=random&size=300`;
+  const broadcastAvatar = chat?.avatar || null;
   const recipientCount = (chat?.members || []).length || chat?.memberCount || 0;
 
   const [muted, setMuted] = useState(chat?.isMuted || false);
@@ -63,7 +64,7 @@ const BroadcastInfoPanel = ({ chat, onBack, onShowMediaLinksDoc }) => {
         <ProfileHero
           name={broadcastName}
           subtitle={`${recipientCount} recipient${recipientCount !== 1 ? 's' : ''}`}
-          avatar={broadcastAvatar} isLocked={isLocked}
+          avatar={broadcastAvatar} color={chat?.avatarColor} initials={chat?.initials} isLocked={isLocked}
           onAvatarClick={() => {}}
         >
           <div className="mt-3 px-4 py-2 bg-accent/10 rounded-full">
@@ -85,12 +86,11 @@ const BroadcastInfoPanel = ({ chat, onBack, onShowMediaLinksDoc }) => {
             {(chat?.members || []).slice(0, 5).map((member, i) => {
               const name = typeof member === 'object' ? member.name : member;
               const avatar = typeof member === 'object' ? member.avatar : null;
-              const displayAvatar = avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'U')}&background=555&color=fff&size=80`;
+              const avatarColor = typeof member === 'object' ? member.avatarColor : null;
+              const initials = typeof member === 'object' ? member.initials : null;
               return (
                 <div key={i} className="flex items-center gap-3 px-5 py-3 hover:bg-bg-hover transition-colors">
-                  <div className="w-10 h-10 rounded-full overflow-hidden shrink-0">
-                    <img src={displayAvatar} alt={name} className="w-full h-full object-cover" />
-                  </div>
+                  <Avatar src={avatar} name={name} initials={initials} color={avatarColor} size={40} />
                   <p className="text-[15px] font-medium text-text-primary truncate">{name}</p>
                 </div>
               );

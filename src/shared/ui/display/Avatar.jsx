@@ -52,7 +52,7 @@ const Avatar = ({
 
     return (
         <div
-            className={`relative flex-shrink-0 ${onClick ? 'cursor-pointer' : ''} ${className}`}
+            className={`relative flex-shrink-0 ${shapeClass} ${onClick ? 'cursor-pointer' : ''} ${className}`}
             onClick={onClick}
             style={inlineSize}
         >

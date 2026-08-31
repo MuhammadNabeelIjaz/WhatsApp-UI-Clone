@@ -23,8 +23,8 @@ const DMInfoPanel = ({ chat, onBack, onStartChat, onShowMedia: _onShowMedia, onS
   const dispatch = useDispatch();
 
   const contactName = chat?.name || 'Unknown';
-  const contactAvatar = chat?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(contactName)}&background=random&size=300`;
-  const phone = chat?.phone || '+92 300 1234567';
+  const contactAvatar = chat?.avatar || null;
+  const phone = chat?.phone || '+1 555-010-0000';
   const about = chat?.about || '~Busyy 🎧';
 
   const [muted, setMuted] = useState(chat?.isMuted || false);
@@ -99,7 +99,8 @@ const DMInfoPanel = ({ chat, onBack, onStartChat, onShowMedia: _onShowMedia, onS
       <div className="flex-1 overflow-y-auto custom-scrollbar">
         <ProfileHero
           name={contactName} subtitle={phone}
-          avatar={contactAvatar} isBlocked={isBlocked} isLocked={isLocked}
+          avatar={contactAvatar} color={chat?.avatarColor} initials={chat?.initials}
+          isBlocked={isBlocked} isLocked={isLocked}
           onAvatarClick={() => setShowAvatarOverlay(true)}
         >
           {isBlocked && (
@@ -193,7 +194,7 @@ const DMInfoPanel = ({ chat, onBack, onStartChat, onShowMedia: _onShowMedia, onS
 
       <ImageViewer
         open={showAvatarOverlay} onClose={() => setShowAvatarOverlay(false)}
-        src={contactAvatar} name={contactName} subtitle={phone} color={chat?.avatarColor}
+        src={contactAvatar} name={contactName} subtitle={phone} color={chat?.avatarColor} initials={chat?.initials}
         actions={[{ icon: <Icons.MessageSquare size={26} className="text-white" />, label: 'Message', primary: true, onClick: () => onStartChat?.() }]}
       />
 

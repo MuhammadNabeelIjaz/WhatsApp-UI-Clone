@@ -3,6 +3,7 @@
 
 import React from 'react';
 import { Icons } from '@constants/icons';
+import Avatar from '@shared/ui/display/Avatar';
 
 const fmt = (n) => {
     if (!n) return '0';
@@ -30,14 +31,14 @@ export const ChannelStickyBar = ({ channel, liveChannel, scrollY, onBack }) => {
                 className="flex items-center gap-2 flex-1 overflow-hidden"
                 style={{ opacity: headerOpacity, transform: `translateX(${(1 - headerOpacity) * -10}px)`, transition: 'opacity 0.15s ease, transform 0.15s ease' }}
             >
-                <div
-                    className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center text-white font-bold text-[12px] shrink-0"
-                    style={{ background: channel.avatarColor || '#00a884' }}
-                >
-                    {channel.avatar
-                        ? <img src={channel.avatar} alt="" className="w-full h-full object-cover" />
-                        : (channel.initials || channel.name?.slice(0, 2).toUpperCase())}
-                </div>
+                <Avatar
+                    src={channel.avatar}
+                    name={channel.name}
+                    initials={channel.initials}
+                    color={channel.avatarColor}
+                    size={32}
+                    className="shrink-0"
+                />
                 <div className="min-w-0" style={{ opacity: titleOpacity }}>
                     <p className="text-text-primary font-semibold text-[15px] truncate">{channel.name}</p>
                     <p className="text-text-secondary text-[12px]">
@@ -63,14 +64,15 @@ const ChannelHeader = ({ channel, liveChannel, scrollY, onAvatarClick }) => {
             className="flex flex-col items-center px-6 pt-4 pb-5"
             style={{ opacity, transform: `scale(${scale})`, transformOrigin: 'top center', transition: 'opacity 0.1s ease, transform 0.1s ease', pointerEvents: ptrEvents }}
         >
-            <div
-                className="w-28 h-28 rounded-full flex items-center justify-center text-4xl font-bold text-white shadow-xl mb-4 overflow-hidden cursor-pointer hover:opacity-90 active:scale-95 transition-all"
-                style={{ background: channel.avatarColor || '#00a884' }}
-                onClick={onAvatarClick}
-            >
-                {channel.avatar
-                    ? <img src={channel.avatar} alt={channel.name} className="w-full h-full object-cover" />
-                    : (channel.icon || channel.initials || channel.name?.slice(0, 2).toUpperCase() || '📢')}
+            <div className="mb-4 hover:opacity-90 active:scale-95 transition-all shadow-xl rounded-full">
+                <Avatar
+                    src={channel.avatar}
+                    name={channel.name}
+                    initials={channel.initials}
+                    color={channel.avatarColor}
+                    size={112}
+                    onClick={onAvatarClick}
+                />
             </div>
             <div className="flex items-center gap-2 mb-1">
                 <h1 className="text-[22px] font-bold text-text-primary">{channel.name}</h1>
