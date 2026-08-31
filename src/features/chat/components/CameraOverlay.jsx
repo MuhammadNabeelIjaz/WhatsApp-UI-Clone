@@ -9,24 +9,44 @@ const CameraOverlay = ({ onCapture, onClose }) => {
   const [captured, setCaptured] = useState(null);
   const [error, setError] = useState(null);
 
-  const startStream = async (mode) => {
-    if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop());
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: mode }, audio: false });
-      streamRef.current = stream;
-      if (videoRef.current) videoRef.current.srcObject = stream;
-    } catch (_e) {
-      setError('Camera access denied or unavailable.');
-    }
-  };
-
   useEffect(() => {
+    let isMounted = true;
+
+    const startStream = async (mode) => {
+      if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop());
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: mode }, audio: false });
+        if (!isMounted) {
+            // Component unmounted while waiting for permissions/stream
+            stream.getTracks().forEach(t => t.stop());
+            return;
+        }
+        streamRef.current = stream;
+        if (videoRef.current) videoRef.current.srcObject = stream;
+      } catch (_e) {
+        if (isMounted) setError('Camera access denied or unavailable.');
+      }
+    };
+
     startStream(facingMode);
+
     navigator.mediaDevices.enumerateDevices().then(devices => {
-      const cams = devices.filter(d => d.kind === 'videoinput');
-      setHasMultipleCameras(cams.length > 1);
+      if (isMounted) {
+          const cams = devices.filter(d => d.kind === 'videoinput');
+          setHasMultipleCameras(cams.length > 1);
+      }
     });
-    return () => { if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop()); };
+
+    return () => {
+        isMounted = false;
+        if (streamRef.current) {
+            streamRef.current.getTracks().forEach(t => t.stop());
+            streamRef.current = null;
+        }
+        if (videoRef.current) {
+            videoRef.current.srcObject = null;
+        }
+    };
   }, [facingMode]);
 
   const capture = () => {
