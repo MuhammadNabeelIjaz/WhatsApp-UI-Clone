@@ -20,7 +20,7 @@ import {
     CircleCheck, Palette, Type, HeartHandshake, HeartOff, AlertCircle,
     CheckCircle, Ban, RotateCcw, ListPlus, SearchX, Circle,
     MoreHorizontal, ExternalLink, Bookmark, Volume2, File, Music,
-    ChevronUp, Tag, VolumeX, MicOff, VideoOff,
+    ChevronUp, Tag, VolumeX, MicOff, VideoOff, Hand,
 } from 'lucide-react';
 
 export const Icons = {
@@ -56,6 +56,7 @@ export const Icons = {
     ChevronUp,
     SearchX,
     ListPlus,
+    Hand,
 };
 
 export default Icons;
