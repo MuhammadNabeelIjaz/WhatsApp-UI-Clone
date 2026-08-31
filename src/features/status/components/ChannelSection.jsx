@@ -44,14 +44,11 @@ const ChannelSection = ({
                     return (
                         <div
                             key={ch.id}
-                            className="flex items-center gap-3 px-4 py-3 hover:bg-bg-hover transition cursor-pointer"
+                            className="flex items-center gap-3 px-4 py-3 hover:bg-bg-hover transition cursor-pointer mx-2 rounded-xl my-0.5"
                             onClick={() => onOpenChat?.({
-                                id: ch.id, name: ch.name, avatar: ch.avatar || null,
-                                avatarColor: ch.avatarColor || '#00a884',
-                                initials: ch.initials || ch.name?.slice(0, 2).toUpperCase(),
+                                ...ch,
                                 isChannel: true, isOwner: ch.isOwner || false,
                                 lastMessage: lastText, time: lastDate,
-                                followerCount: ch.followerCount, description: ch.description,
                             })}
                         >
                             <div
@@ -95,7 +92,7 @@ const ChannelSection = ({
                 </p>
                 <div className="flex flex-col">
                     {discoverChannels.map(ch => (
-                        <div key={ch.id} className="flex items-center gap-3 px-4 py-3 hover:bg-bg-hover transition">
+                        <div key={ch.id} className="flex items-center gap-3 px-4 py-3 hover:bg-bg-hover transition mx-2 rounded-xl my-0.5">
                             <button
                                 className="w-12.5 h-12.5 rounded-full flex items-center justify-center text-[22px] font-bold text-white shrink-0 overflow-hidden shadow-sm"
                                 style={{ background: ch.avatarColor || '#555' }}
@@ -105,12 +102,9 @@ const ChannelSection = ({
                             </button>
 
                             <button className="flex-1 min-w-0 text-left" onClick={() => onOpenChat?.({
-                                id: ch.id, name: ch.name, avatar: ch.avatar || null,
-                                avatarColor: ch.avatarColor || '#00a884',
-                                initials: ch.initials || ch.name?.slice(0, 2).toUpperCase(),
+                                ...ch,
                                 isChannel: true, isOwner: false,
                                 lastMessage: '', time: '',
-                                followerCount: ch.followerCount, description: ch.description,
                             })}>
                                 <div className="flex items-center gap-1">
                                     <span className="font-semibold text-[16px] text-text-primary truncate">{ch.name}</span>
