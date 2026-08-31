@@ -10,6 +10,7 @@ import logger from '@core/utils/logger';
 import { useDispatch, useSelector } from 'react-redux';
 import { setActiveChat } from '@core/store/slices/chatSlice';
 import { selectChatSettings } from '@core/store/slices/settingsSlice';
+import { selectIncomingCall } from '@core/store/slices/callsSlice';
 
 // Layout shells (slots)
 import PrimarySidebar    from '@app/layouts/sidebars/PrimarySidebar';
@@ -37,6 +38,7 @@ const CommunitiesScreen = React.lazy(() => import('@features/community').then(m 
 // Injected into MainSidebar as props to break chat↔calls and chat↔community coupling [H-02, V-6]
 const AddFavoriteHub    = React.lazy(() => import('@features/calls/components/AddFavoriteHub'));
 const NewCommunityModal = React.lazy(() => import('@features/community').then(m => ({ default: m.NewCommunityModal })));
+const IncomingCallModal = React.lazy(() => import('@features/calls').then(m => ({ default: m.IncomingCallModal })));
 
 const TABS_SEQUENCE = [ROUTES.CHATS, ROUTES.STATUS, ROUTES.COMMUNITIES, ROUTES.CALLS, ROUTES.SETTINGS];
 
@@ -44,6 +46,7 @@ const AppNavigator = () => {
     const { isDarkMode } = useTheme();
     const dispatch = useDispatch();
     const chatSettings = useSelector(selectChatSettings);
+    const incomingCall = useSelector(selectIncomingCall);
 
     // ── Apply accent color from settings to CSS variable ────────────────
     useEffect(() => {
@@ -341,6 +344,13 @@ const AppNavigator = () => {
                     />
                 )}
             </main>
+
+            {/* Global Overlays */}
+            {incomingCall && (
+                <React.Suspense fallback={null}>
+                    <IncomingCallModal call={incomingCall} />
+                </React.Suspense>
+            )}
         </div>
     );
 };

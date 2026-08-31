@@ -4,8 +4,9 @@
  * Single-participant view: original avatar + pulse layout.
  * Multi-participant view: DynamicCallGrid with adaptive tiles.
  */
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Icons } from '@constants/icons';
+import { useIsDesktop } from '@shared/hooks';
 import DynamicCallGrid from '../components/DynamicCallGrid';
 
 // Dummy participants palette for "add participant" demo
@@ -20,17 +21,26 @@ const DUMMY_PARTICIPANTS = [
 ];
 
 const ActiveCallScreen = ({ call, onEnd }) => {
-    const [seconds,      setSeconds]      = useState(0);
-    const [isMuted,      setIsMuted]      = useState(false);
-    const [isSpeaker,    setIsSpeaker]    = useState(false);
-    const [isVideo,      setIsVideo]      = useState(false);
-    const [showMoreMenu, setShowMoreMenu] = useState(false);
+    const [seconds, setSeconds] = useState(0);
+    const [isMuted, setIsMuted] = useState(false);
+    const [isVideo, setIsVideo] = useState(false); // Default to off as requested
+
+    const localVideoRef = useRef(null);
+    const streamRef = useRef(null);
 
     
     const [participants, setParticipants] = useState([
         { id: 'p1', name: call?.name || 'Unknown', color: '#3d3470' },
     ]);
     const [showParticipantList, setShowParticipantList] = useState(false);
+    
+    // New interaction states
+    const [isRemoteVideo, setIsRemoteVideo] = useState(false); // Default to off
+    const [isHandRaised, setIsHandRaised] = useState(false);
+    const [isScreenSharing, setIsScreenSharing] = useState(false);
+    const [showEmojiMenu, setShowEmojiMenu] = useState(false);
+    const [showChatMenu, setShowChatMenu] = useState(false);
+    const [showDeviceMenu, setShowDeviceMenu] = useState(null); // 'camera' or 'mic'
     const dummyIdx = participants.length - 1; // next dummy to add
 
     useEffect(() => {
@@ -38,87 +48,154 @@ const ActiveCallScreen = ({ call, onEnd }) => {
         return () => clearInterval(timer);
     }, []);
 
+    const stopMediaTracks = useCallback(() => {
+        if (streamRef.current) {
+            streamRef.current.getTracks().forEach(track => track.stop());
+            streamRef.current = null;
+        }
+    }, []);
+
+    // Handle real camera access
+    useEffect(() => {
+        if (isVideo) {
+            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                .then(stream => {
+                    streamRef.current = stream;
+                    // Mute audio track if currently muted state
+                    stream.getAudioTracks().forEach(track => {
+                        track.enabled = !isMuted;
+                    });
+                    if (localVideoRef.current) {
+                        localVideoRef.current.srcObject = stream;
+                    }
+                })
+                .catch(err => {
+                    console.error("Error accessing camera:", err);
+                    setIsVideo(false);
+                    // Add alert for user if permission denied
+                    if (err.name === 'NotAllowedError') {
+                        alert("Camera access was denied. Please allow permissions in your browser.");
+                    }
+                });
+        } else {
+            stopMediaTracks();
+        }
+
+        return () => stopMediaTracks();
+    }, [isVideo]); // Re-run when video toggles
+
+    // Toggle audio track when mute state changes
+    useEffect(() => {
+        if (streamRef.current) {
+            streamRef.current.getAudioTracks().forEach(track => {
+                track.enabled = !isMuted;
+            });
+        }
+    }, [isMuted]);
+
     const fmt = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
-    const initials = (call?.name || 'U').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    const remoteInitials = (call?.name || 'U').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    
+    // Hardcode local initials based on user preference (Nabeel)
+    const localInitials = "NA";
 
     const handleAddParticipant = useCallback(() => {
         const next = DUMMY_PARTICIPANTS[dummyIdx % DUMMY_PARTICIPANTS.length];
         if (!next) return;
         setParticipants(prev => [...prev, { ...next, id: `p${Date.now()}` }]);
-        setShowMoreMenu(false);
     }, [dummyIdx]);
 
     const isMulti = participants.length > 1;
+    const isDesktop = useIsDesktop();
 
-    return (
-        <div
-            className="absolute inset-0 z-[2000] flex flex-col"
-            style={{ background: 'linear-gradient(160deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' }}
-        >
-            {/* Doodle background */}
-            <div className="absolute inset-0 opacity-5 overflow-hidden pointer-events-none">
-                <svg className="w-full h-full" viewBox="0 0 400 800" fill="none">
-                    {Array.from({ length: 30 }).map((_, i) => (
-                        <text key={i} x={(i % 6) * 70 + 10} y={Math.floor(i / 6) * 120 + 40} fontSize="28" fill="white" opacity="0.3">
-                            {['💬', '🎵', '🎨', '⭐', '🔔', '❤️'][i % 6]}
-                        </text>
-                    ))}
-                </svg>
+    const callContent = (
+        <>
+            {/* Main Video Area */}
+            <div className="absolute inset-0 bg-bg-hover flex items-center justify-center overflow-hidden">
+                {!isMulti ? (
+                    /* 1-on-1 Call: Remote video fullscreen + Local PiP */
+                    <>
+                        {isRemoteVideo ? (
+                            <img 
+                                src={call?.avatar || "https://picsum.photos/seed/remoteuser/1280/720"} 
+                                alt={call?.name} 
+                                className="w-full h-full object-cover opacity-90"
+                            />
+                        ) : (
+                            <div className="w-full h-full bg-bg-hover flex items-center justify-center">
+                                <div className="w-32 h-32 rounded-full bg-[#607d8b] flex items-center justify-center shadow-lg">
+                                    <span className="text-text-primary text-[48px] font-bold">{remoteInitials}</span>
+                                </div>
+                            </div>
+                        )}
+                        
+                        {/* Status indicators over remote video (hand raise / screen share) */}
+                        <div className="absolute top-20 left-6 flex flex-col gap-2 z-20">
+                            {isScreenSharing && (
+                                <div className="bg-black/60 backdrop-blur px-3 py-1.5 rounded-full flex items-center gap-2 text-text-primary">
+                                    <Icons.Monitor size={16} className="text-[#25D366]" />
+                                    <span className="text-sm font-medium">You are sharing your screen</span>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* PiP Local Video */}
+                        <div className="absolute bottom-[90px] right-6 w-[200px] aspect-[4/3] rounded-xl overflow-hidden shadow-2xl border border-white/10 z-20">
+                            <div className="absolute top-0 right-0 w-full h-full bg-bg-surface">
+                                <video 
+                                    ref={localVideoRef} 
+                                    autoPlay 
+                                    playsInline 
+                                    muted // Always mute local video playback to avoid feedback
+                                    className={`w-full h-full object-cover ${isVideo ? 'block' : 'hidden'}`} 
+                                    style={{ transform: 'scaleX(-1)' }} // Mirror the local video
+                                />
+                                {!isVideo && (
+                                    <div className="w-full h-full flex items-center justify-center">
+                                        <div className="w-16 h-16 rounded-full flex items-center justify-center shadow-md"
+                                            style={{ backgroundColor: '#10b981' }}>
+                                            <span className="text-text-primary text-2xl font-bold">{localInitials}</span>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                            
+                            {/* Hand Raised indicator in local video */}
+                            {isHandRaised && (
+                                <div className="absolute top-2 left-2 bg-black/50 p-1.5 rounded-full">
+                                    <Icons.Hand size={14} className="text-[#ffca28]" />
+                                </div>
+                            )}
+                        </div>
+                    </>
+                ) : (
+                    /* Multiple participants: Grid View */
+                    <div className="w-full h-[calc(100%-80px)] px-4 py-4 pt-12">
+                        <DynamicCallGrid
+                            participants={participants}
+                            onOverflowClick={() => setShowParticipantList(true)}
+                        />
+                    </div>
+                )}
             </div>
 
-            {/* Top bar */}
-            <div className="relative z-10 flex items-center justify-between px-4 pt-10 pb-4 shrink-0">
-                <button onClick={onEnd}
-                    className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center active:scale-90 transition-all">
-                    <Icons.ChevronDown size={22} className="text-white" />
-                </button>
-                <div className="text-center flex-1 min-w-0 px-3">
-                    <p className="text-white text-[17px] font-semibold truncate">
-                        {isMulti ? `Group Call (${participants.length})` : (call?.name || 'Unknown')}
-                    </p>
-                    <div className="flex items-center justify-center gap-1 mt-0.5">
-                        <Icons.Lock size={11} className="text-accent" />
-                        <p className="text-white/60 text-[12px]">End-to-end encrypted</p>
+            {/* Top Info Bar (Optional/Hover) */}
+            <div className="absolute top-0 left-0 w-full px-6 py-4 flex items-center justify-between z-30 bg-bg-surface/60 backdrop-blur-md border-b border-border-main/30">
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-[#25D366] flex items-center justify-center">
+                        <Icons.Phone size={16} className="text-text-primary" />
                     </div>
+                    <span className="text-text-primary font-medium drop-shadow-md">WhatsApp</span>
                 </div>
-                
-                <button
-                    onClick={handleAddParticipant}
-                    title="Add participant"
-                    className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center active:scale-90 transition-all hover:bg-white/20">
-                    <Icons.UserPlus size={20} className="text-white" />
-                </button>
+                <div className="px-3 py-1 bg-bg-hover/80 rounded-md">
+                    <p className="text-text-primary text-[13px] font-mono tracking-widest">{fmt(seconds)}</p>
+                </div>
             </div>
 
-            {/* More menu */}
-            {showMoreMenu && (
-                <div className="absolute bottom-36 left-1/2 z-20 w-[240px] -translate-x-1/2 rounded-3xl bg-bg-surface/95 backdrop-blur border border-border-main shadow-2xl p-3">
-                    <button onClick={() => setShowMoreMenu(false)} className="text-text-secondary text-left text-[13px] mb-2 w-full">Close</button>
-                    <div className="space-y-2">
-                        <button onClick={() => { setShowMoreMenu(false); setIsMuted(m => !m); }}
-                            className="w-full text-left rounded-xl px-3 py-3 hover:bg-bg-hover transition-colors text-text-primary text-[14px]">
-                            {isMuted ? 'Unmute microphone' : 'Mute microphone'}
-                        </button>
-                        <button onClick={() => { setShowMoreMenu(false); setIsSpeaker(s => !s); }}
-                            className="w-full text-left rounded-xl px-3 py-3 hover:bg-bg-hover transition-colors text-text-primary text-[14px]">
-                            {isSpeaker ? 'Speaker off' : 'Speaker on'}
-                        </button>
-                        <button onClick={() => { setShowMoreMenu(false); setIsVideo(v => !v); }}
-                            className="w-full text-left rounded-xl px-3 py-3 hover:bg-bg-hover transition-colors text-text-primary text-[14px]">
-                            {isVideo ? 'Turn video off' : 'Turn video on'}
-                        </button>
-                        <button onClick={() => { setShowMoreMenu(false); handleAddParticipant(); }}
-                            className="w-full text-left rounded-xl px-3 py-3 hover:bg-bg-hover transition-colors text-text-primary text-[14px]">
-                            Add participant
-                        </button>
-                    </div>
-                </div>
-            )}
-
-            {/* Participant list overlay */}
+            {/* Participant list overlay - updated z-index to 60 to cover bottom bar */}
             {showParticipantList && (
                 <div
-                    className="absolute inset-0 z-30 bg-bg-surface/95 backdrop-blur flex flex-col animate-fade-in"
+                    className="absolute inset-0 z-[60] bg-bg-surface/95 backdrop-blur flex flex-col animate-fade-in"
                     onClick={() => setShowParticipantList(false)}
                 >
                     <div
@@ -137,7 +214,7 @@ const ActiveCallScreen = ({ call, onEnd }) => {
                         <div className="overflow-y-auto custom-scrollbar pb-8">
                             {participants.map((p) => (
                                 <div key={p.id} className="flex items-center gap-3 px-5 py-3 hover:bg-bg-hover transition-colors">
-                                    <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-[14px] shrink-0"
+                                    <div className="w-10 h-10 rounded-full flex items-center justify-center text-text-primary font-bold text-[14px] shrink-0"
                                         style={{ backgroundColor: p.color || '#607d8b' }}>
                                         {(p.name || 'U').slice(0, 2).toUpperCase()}
                                     </div>
@@ -149,59 +226,161 @@ const ActiveCallScreen = ({ call, onEnd }) => {
                 </div>
             )}
 
-            {/* Center: single vs grid */}
-            <div className="relative z-10 flex-1 flex flex-col items-center justify-center min-h-0">
-                {!isMulti ? (
-                    /* Single participant — original pulse avatar */
-                    <>
-                        <div className="relative">
-                            <div className="absolute inset-0 rounded-full bg-accent/20 animate-ping scale-125" />
-                            <div className="absolute inset-0 rounded-full bg-accent/10 animate-pulse scale-150" />
-                            <div className="w-32 h-32 rounded-full bg-[#3d3470] flex items-center justify-center border-2 border-accent/30 shadow-2xl relative z-10">
-                                <span className="text-[44px] font-bold text-[#9b8fe8]">{initials}</span>
-                            </div>
-                        </div>
-                        <p className="text-white/50 text-[18px] font-medium mt-8 tabular-nums">{fmt(seconds)}</p>
-                    </>
-                ) : (
-                    /* Multiple participants*/
-                    <div className="w-full h-full flex flex-col px-2 py-2">
-                        <DynamicCallGrid
-                            participants={participants}
-                            onOverflowClick={() => setShowParticipantList(true)}
-                        />
-                        <p className="text-white/40 text-[13px] text-center tabular-nums mt-2 shrink-0">
-                            {fmt(seconds)}
-                        </p>
+            {/* Bottom Toolbar matching media_1 / media_2 */}
+            <div className="absolute bottom-0 left-0 w-full h-[80px] bg-bg-surface/90 backdrop-blur-md flex items-center justify-between px-6 z-30 border-t border-border-main/30 shadow-xl">
+                
+                {/* Left controls: Video, Mic */}
+                <div className="flex items-center gap-2 relative">
+                    <div className="flex items-center bg-bg-hover rounded-full overflow-hidden h-10">
+                        <button onClick={() => setIsVideo(v => !v)} className="flex items-center justify-center w-12 h-full hover:bg-bg-skeleton transition-colors">
+                            {isVideo ? <Icons.Video size={20} className="text-text-primary" /> : <Icons.VideoOff size={20} className="text-[#f15c6d]" />}
+                        </button>
+                        <div className="w-[1px] h-4 bg-white/10" />
+                        <button onClick={() => setShowDeviceMenu(showDeviceMenu === 'camera' ? null : 'camera')} className="flex items-center justify-center w-8 h-full hover:bg-bg-skeleton transition-colors">
+                            <Icons.ChevronDown size={16} className="text-text-primary" />
+                        </button>
                     </div>
-                )}
-            </div>
+                    
+                    {showDeviceMenu === 'camera' && (
+                        <div className="absolute bottom-14 left-0 bg-bg-hover border border-white/10 rounded-xl py-2 w-48 shadow-xl">
+                            <div className="px-4 py-2 text-sm text-text-secondary font-medium">Select Camera</div>
+                            <button className="w-full px-4 py-2 text-left text-text-primary text-sm hover:bg-white/10 flex items-center justify-between">
+                                Default Camera <Icons.Check size={14} className="text-[#25D366]" />
+                            </button>
+                        </div>
+                    )}
 
-            {/* Bottom controls */}
-            <div className="relative z-10 pb-8 px-4 shrink-0">
-                <div className="bg-bg-surface/30 backdrop-blur rounded-3xl p-4 flex items-center justify-around">
-                    <button onClick={() => setShowMoreMenu(v => !v)}
-                        className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center active:scale-90 transition-all">
-                        <Icons.MoreVertical size={20} className="text-white" />
+                    <div className="flex items-center bg-bg-hover rounded-full overflow-hidden h-10">
+                        <button onClick={() => setIsMuted(m => !m)} className="flex items-center justify-center w-12 h-full hover:bg-bg-skeleton transition-colors">
+                            {!isMuted ? <Icons.Mic size={20} className="text-text-primary" /> : <Icons.MicOff size={20} className="text-[#f15c6d]" />}
+                        </button>
+                        <div className="w-[1px] h-4 bg-white/10" />
+                        <button onClick={() => setShowDeviceMenu(showDeviceMenu === 'mic' ? null : 'mic')} className="flex items-center justify-center w-8 h-full hover:bg-bg-skeleton transition-colors">
+                            <Icons.ChevronDown size={16} className="text-text-primary" />
+                        </button>
+                    </div>
+                    
+                    {showDeviceMenu === 'mic' && (
+                        <div className="absolute bottom-14 left-24 bg-bg-hover border border-white/10 rounded-xl py-2 w-48 shadow-xl">
+                            <div className="px-4 py-2 text-sm text-text-secondary font-medium">Select Microphone</div>
+                            <button className="w-full px-4 py-2 text-left text-text-primary text-sm hover:bg-white/10 flex items-center justify-between">
+                                Default Microphone <Icons.Check size={14} className="text-[#25D366]" />
+                            </button>
+                        </div>
+                    )}
+                </div>
+
+                {/* Center controls: Emoji, Raise Hand, Screen Share, Participants, Chat */}
+                <div className="flex items-center gap-2 relative">
+                    <div className="relative">
+                        <button 
+                            onClick={() => setShowEmojiMenu(!showEmojiMenu)}
+                            className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${showEmojiMenu ? 'bg-bg-skeleton' : 'hover:bg-bg-hover'}`}
+                        >
+                            <Icons.Smile size={20} className="text-text-primary" />
+                        </button>
+                        {showEmojiMenu && (
+                            <div className="absolute bottom-14 left-1/2 -translate-x-1/2 bg-bg-hover border border-white/10 rounded-full px-4 py-2 flex items-center gap-3 shadow-xl">
+                                {['👍', '❤️', '😂', '😮', '😢', '👏'].map(emoji => (
+                                    <button key={emoji} onClick={() => setShowEmojiMenu(false)} className="text-2xl hover:scale-125 transition-transform">
+                                        {emoji}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    
+                    <button 
+                        onClick={() => setIsHandRaised(!isHandRaised)}
+                        className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isHandRaised ? 'bg-[#25D366]/20 text-[#25D366]' : 'hover:bg-bg-hover text-text-primary'}`}
+                    >
+                        <Icons.Hand size={20} className={isHandRaised ? 'text-[#25D366]' : 'text-text-primary'} />
                     </button>
-                    <button onClick={() => setIsVideo(v => !v)}
-                        className={`w-12 h-12 rounded-full flex items-center justify-center active:scale-90 transition-all ${isVideo ? 'bg-accent' : 'bg-white/10'}`}>
-                        <Icons.Video size={20} className="text-white" />
+                    
+                    <button 
+                        onClick={() => setIsScreenSharing(!isScreenSharing)}
+                        className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isScreenSharing ? 'bg-[#25D366]/20 text-[#25D366]' : 'hover:bg-bg-hover text-text-primary'}`}
+                    >
+                        <Icons.Monitor size={20} className={isScreenSharing ? 'text-[#25D366]' : 'text-text-primary'} />
                     </button>
-                    <button onClick={() => setIsSpeaker(s => !s)}
-                        className={`w-12 h-12 rounded-full flex items-center justify-center active:scale-90 transition-all ${isSpeaker ? 'bg-accent' : 'bg-white/10'}`}>
-                        <Icons.Bell size={20} className="text-white" />
+                    
+                    <button 
+                        onClick={() => setShowParticipantList(true)}
+                        className="w-10 h-10 rounded-full hover:bg-bg-hover flex items-center justify-center transition-colors relative"
+                    >
+                        <Icons.Users size={20} className="text-text-primary" />
+                        {isMulti && (
+                            <div className="absolute top-1 right-1 w-3.5 h-3.5 bg-[#25D366] rounded-full text-[#111b21] text-[9px] font-bold flex items-center justify-center">
+                                {participants.length}
+                            </div>
+                        )}
                     </button>
-                    <button onClick={() => setIsMuted(m => !m)}
-                        className={`w-12 h-12 rounded-full flex items-center justify-center active:scale-90 transition-all ${isMuted ? 'bg-white/30' : 'bg-white/10'}`}>
-                        {isMuted ? <Icons.MicOff size={20} className="text-white" /> : <Icons.Mic size={20} className="text-white" />}
+                    
+                    <div className="relative">
+                        <button 
+                            onClick={() => setShowChatMenu(!showChatMenu)}
+                            className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${showChatMenu ? 'bg-bg-skeleton' : 'hover:bg-bg-hover'}`}
+                        >
+                            <Icons.MessageSquare size={20} className="text-text-primary" />
+                        </button>
+                        {showChatMenu && (
+                            <div className="absolute bottom-14 right-0 bg-bg-hover border border-white/10 rounded-xl w-64 shadow-xl overflow-hidden">
+                                <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between">
+                                    <span className="text-text-primary font-medium text-sm">In-call Messages</span>
+                                    <button onClick={() => setShowChatMenu(false)}>
+                                        <Icons.X size={16} className="text-text-secondary hover:text-text-primary" />
+                                    </button>
+                                </div>
+                                <div className="p-4 h-32 flex items-center justify-center">
+                                    <span className="text-text-secondary/80 text-sm">No messages yet.</span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    
+                    {/* Remote video toggle (debug) */}
+                    {!isMulti && (
+                        <button onClick={() => setIsRemoteVideo(v => !v)} title="Toggle Remote Camera" className="w-10 h-10 rounded-full hover:bg-bg-hover flex items-center justify-center transition-colors">
+                            {isRemoteVideo ? <Icons.Video size={20} className="text-text-secondary" /> : <Icons.VideoOff size={20} className="text-text-secondary" />}
+                        </button>
+                    )}
+                    
+                    {/* Add participant (debug) */}
+                    <button onClick={handleAddParticipant} title="Add dummy participant" className="w-10 h-10 rounded-full hover:bg-bg-hover flex items-center justify-center transition-colors">
+                        <Icons.UserPlus size={20} className="text-text-secondary/60" />
                     </button>
-                    <button onClick={onEnd}
-                        className="w-12 h-12 rounded-full bg-red-500 flex items-center justify-center active:scale-90 transition-all shadow-lg">
-                        <Icons.Phone size={20} className="text-white rotate-135" />
+                </div>
+
+                {/* Right controls: End call */}
+                <div className="flex items-center">
+                    <button onClick={() => { stopMediaTracks(); onEnd(); }}
+                        className="h-10 px-6 rounded-full bg-[#f15c6d] flex items-center justify-center hover:bg-[#f67683] transition-colors shadow-lg group">
+                        <Icons.Phone size={20} className="text-white rotate-[135deg]" />
                     </button>
                 </div>
             </div>
+        </>
+    );
+
+    if (isDesktop) {
+        return (
+            <div className="fixed inset-0 z-[4000] flex items-center justify-center bg-black/70 animate-fade-in backdrop-blur-sm">
+                <div 
+                    className="w-[720px] max-w-[95vw] h-[540px] max-h-[95vh] rounded-3xl overflow-hidden shadow-2xl relative flex flex-col animate-zoom-in"
+                    
+                >
+                    {callContent}
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div
+            className="absolute inset-0 z-[2000] flex flex-col"
+            
+        >
+            {callContent}
         </div>
     );
 };

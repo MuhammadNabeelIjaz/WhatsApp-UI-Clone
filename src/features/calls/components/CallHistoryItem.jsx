@@ -10,7 +10,7 @@ const CallHistoryItem = ({ call, onRowClick, onCallClick, onAvatarClick }) => {
     return (
         <div
             onClick={onRowClick}
-            className="flex items-center px-4 py-3 cursor-pointer transition-all duration-200 hover:bg-bg-hover active:bg-bg-hover/80 border-b border-border-main/10 group"
+            className="flex items-center px-4 py-3 cursor-pointer transition-all duration-200 hover:bg-bg-hover active:bg-bg-hover/80 mx-2 rounded-xl my-0.5 group"
         >
             <div className="flex-shrink-0" onClick={(e) => { if (onAvatarClick) { e.stopPropagation(); onAvatarClick(call); } }}>
                 <Avatar src={call.avatar} name={call.name} size={48} shape="circle" />
