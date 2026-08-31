@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
  * WhatsApp Premium Clone - Voice Note Bubble (Upgraded)
  * Featuring Playback Speed, Blue Mic logic, and Reaction support.
  */
-const VoiceBubble = ({ duration, time, isMine, status, avatar, reaction }) => {
+const VoiceBubble = ({ duration, time, isMine, status, avatar, reaction, senderName, senderColor, onSenderClick }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [speed, setSpeed] = useState(1); // 1, 1.5, 2
 
@@ -18,9 +18,21 @@ const VoiceBubble = ({ duration, time, isMine, status, avatar, reaction }) => {
 
     return (
         <div className={`relative flex flex-col ${isMine ? 'items-end' : 'items-start'} mb-4`}>
-            <div className={`p-2 rounded-2xl shadow-md flex items-center gap-3 relative border border-white/5 min-w-[280px]
+            <div className={`p-2 rounded-2xl shadow-md flex items-center gap-3 relative border border-border-main/20 min-w-[280px] flex-col
                 ${isMine ? 'bg-bg-bubble-out rounded-tr-none' : 'bg-bg-bubble-in rounded-tl-none'}
             `}>
+                {/* Sender Name */}
+                {senderName && (
+                    <div 
+                        className="text-[12.5px] font-semibold leading-tight mb-2 ml-1 cursor-pointer hover:underline"
+                        style={{ color: senderColor || (isMine ? '#34b7f1' : '#e53935') }}
+                        onClick={onSenderClick}
+                    >
+                        {senderName}
+                    </div>
+                )}
+                
+                <div className="flex items-center gap-3 w-full">
                 {/* Sender Avatar with Blue Mic Overlay */}
                 <div className="relative flex-shrink-0">
                     <img
@@ -40,7 +52,7 @@ const VoiceBubble = ({ duration, time, isMine, status, avatar, reaction }) => {
                     <div className="flex items-center gap-1.5">
                         <button
                             onClick={() => setIsPlaying(!isPlaying)}
-                            className="text-white/90 transition-transform active:scale-90"
+                            className="text-text-secondary transition-transform active:scale-90"
                         >
                             {isPlaying ? <Icons.Pause size={28} fill="currentColor" /> : <Icons.Play size={28} fill="currentColor" />}
                         </button>
@@ -53,7 +65,7 @@ const VoiceBubble = ({ duration, time, isMine, status, avatar, reaction }) => {
                                     initial={{ height: "30%" }}
                                     animate={{
                                         height: isPlaying ? [`${Math.random() * 80 + 20}%`, `${Math.random() * 80 + 20}%`] : "40%",
-                                        backgroundColor: isPlaying ? (isMine ? "#fff" : "#53bdeb") : (isMine ? "rgba(255,255,255,0.4)" : "rgba(134,150,160,0.4)")
+                                        backgroundColor: isPlaying ? (isMine ? "#8696a0" : "#53bdeb") : "rgba(134,150,160,0.4)"
                                     }}
                                     transition={{ repeat: Infinity, duration: 0.5, delay: i * 0.05 }}
                                     className="w-[2.5px] rounded-full"
@@ -64,7 +76,7 @@ const VoiceBubble = ({ duration, time, isMine, status, avatar, reaction }) => {
                         {/* Playback Speed Badge (WhatsApp Premium Style) */}
                         <button
                             onClick={toggleSpeed}
-                            className="bg-black/20 hover:bg-black/40 text-[11px] font-bold text-white px-1.5 py-0.5 rounded-full transition-colors min-w-[32px]"
+                            className="bg-bg-hover hover:bg-bg-skeleton text-[11px] font-bold text-text-primary px-1.5 py-0.5 rounded-full transition-colors min-w-[32px]"
                         >
                             {speed}x
                         </button>
@@ -72,18 +84,19 @@ const VoiceBubble = ({ duration, time, isMine, status, avatar, reaction }) => {
 
                     {/* Footer Metadata */}
                     <div className="flex justify-between items-center px-1 mt-0.5">
-                        <span className="text-[11px] font-medium text-white/70">
+                        <span className="text-[11px] font-medium text-text-secondary">
                             {duration}
                         </span>
                         <div className="flex items-center gap-1">
-                            <span className="text-[10px] text-white/60">
+                            <span className="text-[10px] text-text-secondary">
                                 {time}
                             </span>
                             {isMine && (
-                                <Icons.CheckCheck size={15} className={status === 'read' ? "text-[#53bdeb]" : "text-white/40"} strokeWidth={2.5} />
+                                <Icons.CheckCheck size={15} className={status === 'read' ? "text-[#53bdeb]" : "text-text-secondary"} strokeWidth={2.5} />
                             )}
                         </div>
                     </div>
+                </div>
                 </div>
             </div>
 

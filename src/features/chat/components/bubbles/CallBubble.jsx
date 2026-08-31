@@ -4,13 +4,23 @@ import { Icons } from '@constants/icons';
  * WhatsApp Premium Clone - Call Log Bubble (Upgraded)
  * Exact match for "No answer" and "Missed call" logs from user video.
  */
-const CallBubble = ({ type, time, isMine, isVideo, isMissed }) => {
+const CallBubble = ({ type, time, isMine, isVideo, isMissed, senderName, senderColor, onSenderClick }) => {
     return (
         <div className={`flex flex-col ${isMine ? 'items-end' : 'items-start'} mb-1`}>
-            <div className={`max-w-[280px] p-3 rounded-2xl shadow-sm flex items-center gap-4 border border-white/5 transition-all
+            <div className={`max-w-[280px] p-3 rounded-2xl shadow-sm flex flex-col border border-white/5 transition-all
                 ${isMine ? 'bg-bg-bubble-out rounded-tr-none' : 'bg-bg-bubble-in rounded-tl-none'}`}
             >
+                {senderName && (
+                    <div 
+                        className="text-[12.5px] font-semibold leading-tight mb-2 w-full cursor-pointer hover:underline"
+                        style={{ color: senderColor || (isMine ? '#34b7f1' : '#e53935') }}
+                        onClick={onSenderClick}
+                    >
+                        {senderName}
+                    </div>
+                )}
                 {/* --- Circular Icon Container --- */}
+                <div className="flex items-center gap-4 w-full">
                 <div className="w-11 h-11 rounded-full bg-black/20 flex items-center justify-center shrink-0">
                     {isMissed ? (
                         <Icons.PhoneMissed size={20} className="text-[#ef4444]" /> // Red for missed
@@ -41,9 +51,10 @@ const CallBubble = ({ type, time, isMine, isVideo, isMissed }) => {
                 </div>
 
                 {/* --- Timestamp --- */}
-                <span className="text-[10.5px] self-end opacity-60 text-white/70 whitespace-nowrap font-medium tracking-tight">
+                <span className="text-[10.5px] self-end opacity-60 text-white/70 whitespace-nowrap font-medium tracking-tight mt-auto">
                     {time}
                 </span>
+                </div>
             </div>
         </div>
     );

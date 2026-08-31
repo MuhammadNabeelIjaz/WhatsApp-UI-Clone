@@ -1,13 +1,13 @@
 import React, { useState, useCallback, useRef, useMemo, useEffect } from 'react';
 import { INITIAL_MESSAGES, messagesByChat, normalizeMessage } from '@data/messages';
 import { Icons } from '@constants/icons';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import logger from '@core/utils/logger';
 import { useDispatch, useSelector } from 'react-redux';
 import { showToast } from '@core/store/slices/uiSlice';
 import { selectStarredMessages, markAsRead, starMessage, unstarMessage, muteChat } from '@core/store/slices/chatSlice';
 import { startCall, endCall, selectActiveCall } from '@core/store/slices/callsSlice';
-import { selectChannels } from '@core/store/slices/channelSlice';
+import { selectChannels, markChannelAsRead } from '@core/store/slices/channelSlice';
 import { selectSettings } from '@core/store/slices/settingsSlice';
 import { blockContactThunk } from '@core/store/slices/contactSlice';
 import { ChatDetailSkeleton } from '@shared/ui/display/Skeletons';
@@ -87,17 +87,42 @@ const ChatDetail = ({
     // ── Core state ────────────────────────────────────────────────────────────
     // Per-chat message initialization: use chat-specific messages when available,
     // fall back to INITIAL_MESSAGES for the demo.
-    const getInitialMessages = useCallback((chatId) => {
+    const getInitialMessages = useCallback((chatId, currentChat) => {
+        if (currentChat?.isChannel || currentChat?.type === 'channel' || currentChat?.posts) {
+            return (currentChat.posts || []).map(p => ({
+                id: p.id,
+                type: p.type || 'text',
+                align: 'left',
+                props: {
+                    ...p,
+                    isMine: false,
+                    senderName: currentChat.name,
+                }
+            }));
+        }
         const raw = messagesByChat[chatId] ? [...messagesByChat[chatId]] : [...INITIAL_MESSAGES];
         return raw.map(normalizeMessage);
     }, []);
-    const [messages, setMessages] = useState(() => getInitialMessages(chat?.id));
+    const [messages, setMessages] = useState(() => getInitialMessages(chat?.id, chat));
     const isMessagesLoading = useFakeLoading(380, chat?.id);
     const scrollRef = useRef(null);
+    const [showScrollBottom, setShowScrollBottom] = useState(false);
+
+    const handleScroll = useCallback(() => {
+        if (!scrollRef.current) return;
+        const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+        setShowScrollBottom(scrollHeight - scrollTop - clientHeight > 200);
+    }, []);
+
+    const scrollToBottom = useCallback(() => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
+        }
+    }, []);
 
     // Reset messages when the active chat changes
     useEffect(() => {
-        setMessages(getInitialMessages(chat?.id));
+        setMessages(getInitialMessages(chat?.id, chat));
         // Reset scroll position on chat change
         setTimeout(() => {
             const scrollContainer = scrollRef.current;
@@ -172,8 +197,13 @@ const ChatDetail = ({
 
     // Mark chat as read whenever it is opened (clears unread badge + manual-unread flag)
     useEffect(() => {
-        if (chat?.id) dispatch(markAsRead(chat.id));
-    }, [chat?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+        if (chat?.id) {
+            dispatch(markAsRead(chat.id));
+            if (resolvedType === 'channel') {
+                dispatch(markChannelAsRead(chat.id));
+            }
+        }
+    }, [chat?.id, resolvedType]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // Cross-screen info panel: when Calls/Archive/Communities fires onOpenInfoPanel,
     // AppNavigator sets pendingInfoOpen. On mobile (no SecondarySidebar) we open the
@@ -341,8 +371,17 @@ const ChatDetail = ({
         [messages, replyingTo]
     );
 
-    const handleSendMessage = useCallback((text) => {
-        if (!text?.trim()) return;
+    const isReplyMine = replyingToMessage?.props?.isMine;
+    const myName = settings?.profile?.name || 'You';
+
+    const handleSendMessage = useCallback((payload) => {
+        if (!payload) return;
+        
+        const isVoice = typeof payload === 'object' && payload.type === 'voice';
+        const text = isVoice ? '' : payload;
+        
+        if (!isVoice && !text?.trim()) return;
+
         // Safely extract reply-to fields regardless of message schema
         const replyText = replyingToMessage
             ? (replyingToMessage.props?.text
@@ -351,11 +390,11 @@ const ChatDetail = ({
                 || replyingToMessage.props?.name
                 || 'Replied message')
             : null;
+        const isReplyMine = replyingToMessage?.props?.isMine;
+        const myName = settings?.profile?.name || 'You';
         const replySender = replyingToMessage
-            ? (replyingToMessage.props?.sender
-                || replyingToMessage.props?.name
-                || (replyingToMessage.props?.isMine ? 'You' : 'Contact')
-                || 'Contact')
+            ? (replyingToMessage.props?.senderName
+                || (isReplyMine ? myName : (chat?.name || 'Contact')))
             : null;
 
         const newMessage = replyingToMessage
@@ -434,13 +473,27 @@ const ChatDetail = ({
         const sq = chatSearchQuery;
         // Upgrade 4F: respect privacy.readReceipts — downgrade 'read' to 'delivered' display when disabled
         const readReceipts = settings?.privacy?.readReceipts ?? true;
-        const props = (!readReceipts && msg.props?.status === 'read')
+        const baseProps = (!readReceipts && msg.props?.status === 'read')
             ? { ...msg.props, status: 'delivered' }
             : msg.props;
+        
+        const isMine = baseProps.isMine;
+        const myName = settings?.profile?.name || 'You';
+        const senderName = isMine ? myName : (chat.name || 'Contact');
+        
+        const onSenderClick = (e) => {
+            e.stopPropagation();
+            if (!isMine) {
+                handleOpenUserInfo();
+            }
+        };
+
+        const props = { ...baseProps, senderName, onSenderClick };
+
         switch (msg.type) {
             case 'call':     return <CallBubble     {...props} />;
             case 'reply':    return <ReplyBubble    {...props} searchQuery={sq} onQuoteClick={() => props?.replyTo?.id && scrollToMessage(props.replyTo.id)} />;
-            case 'image':    return <ImageBubble    {...props} />;
+            case 'image':    return <ImageBubble    {...props} src={props.media?.url || props.src} caption={props.media?.caption || props.caption} />;
             case 'poll':     return <PollBubble     {...props} />;
             case 'voice':    return <VoiceBubble    {...props} avatar={chatAvatar} />;
             case 'audio':    return <AudioBubble    {...props} />;
@@ -650,59 +703,110 @@ const ChatDetail = ({
             )}
 
             {/* Message Thread */}
-            <div
-                ref={scrollRef}
-                data-chat-scroll
-                className="flex-1 overflow-y-auto pt-4 pb-12 custom-scrollbar relative z-10"
-                style={{
-                    backgroundColor: chatWallpaper?.type === 'solid' ? chatWallpaper.color : 'var(--bg-chat-canvas)',
-                    backgroundImage: chatWallpaper?.type === 'image' ? `url(${chatWallpaper.src})` : 'none',
-                    backgroundSize: chatWallpaper?.type === 'image' ? 'cover' : undefined,
-                    backgroundPosition: chatWallpaper?.type === 'image' ? 'center' : undefined,
-                }}
-            >
-                <div className="absolute inset-0 pointer-events-none -z-10" style={{ backgroundColor: 'var(--bg-chat-canvas)', opacity: chatWallpaper ? 0 : 0.97 }} />
+            <div className="flex-1 min-h-0 relative flex flex-col">
+                <div
+                    ref={scrollRef}
+                    data-chat-scroll
+                    onScroll={handleScroll}
+                    className="flex-1 overflow-y-auto pt-4 pb-12 custom-scrollbar relative z-10"
+                    style={{
+                        backgroundColor: chatWallpaper?.type === 'solid' ? chatWallpaper.color : 'var(--bg-chat-canvas)',
+                        backgroundImage: chatWallpaper?.type === 'image' ? `url(${chatWallpaper.src})` : 'none',
+                        backgroundSize: chatWallpaper?.type === 'image' ? 'cover' : undefined,
+                        backgroundPosition: chatWallpaper?.type === 'image' ? 'center' : undefined,
+                    }}
+                >
+                    <div className="absolute inset-0 pointer-events-none -z-10" style={{ backgroundColor: 'var(--bg-chat-canvas)', opacity: chatWallpaper ? 0 : 0.97 }} />
 
-                <div className="flex flex-col gap-1.5 md:gap-2 w-full pb-6 relative">
-                    <div
-                        className="self-center text-[11px] font-medium px-4 py-1.5 rounded-lg my-4 uppercase tracking-widest border shadow-sm"
-                        style={{ backgroundColor: 'var(--bg-surface)', color: 'var(--text-secondary)', borderColor: 'var(--border)' }}
-                    >
-                        Today
-                    </div>
+                    <div className="flex flex-col gap-1.5 md:gap-2 w-full pb-6 relative">
+                        <div
+                            className="self-center text-[11px] font-medium px-4 py-1.5 rounded-lg my-4 uppercase tracking-widest border shadow-sm"
+                            style={{ backgroundColor: 'var(--bg-surface)', color: 'var(--text-secondary)', borderColor: 'var(--border)' }}
+                        >
+                            Today
+                        </div>
 
-                    {messages.map((rawMsg) => {
-                        const msg        = normalizeMessage(rawMsg);
-                        const isStarred     = starredMessageIds.has(msg.id);
-                        const isHighlighted = highlightedMessageId === msg.id;
-                        return (
-                            <div
-                                key={msg.id}
-                                data-msg-id={msg.id}
-                                className={isHighlighted ? 'rounded-2xl border border-accent/30 bg-accent/10 transition-all duration-300' : ''}
-                            >
-                                <SwipeableMessage
-                                    id={msg.id}
-                                    align={msg.align}
-                                    isSelected={selectedMessages.includes(msg.id)}
-                                    selectionModeActive={selectionModeActive}
-                                    onToggleSelect={toggleMessageSelection}
-                                    onSwipeToReply={() => { logger.debug('ChatDetail', 'swipe_to_reply', { msgId: msg.id }); setReplyingTo(msg.id); }}
-                                    onContextMenu={handleContextMenu}
+                        {messages.map((rawMsg) => {
+                            const msg        = normalizeMessage(rawMsg);
+                            const isStarred     = starredMessageIds.has(msg.id);
+                            const isHighlighted = highlightedMessageId === msg.id;
+
+                            // Determine Avatar and Sender Name
+                            let msgAvatarUrl = null;
+                            let msgSenderName = null;
+                            let msgSenderColor = null;
+
+                            if (!msg.props.isMine) {
+                                if (resolvedType === 'group' || resolvedType === 'announcement') {
+                                    msgAvatarUrl = chat?.avatar; 
+                                    msgSenderName = msg.props.sender !== 'c1' ? msg.props.sender : (chat?.name || 'Contact');
+                                    msgSenderColor = chat?.avatarColor || '#34b7f1';
+                                } else {
+                                    msgAvatarUrl = chat?.avatar;
+                                    msgSenderName = chat?.name;
+                                    msgSenderColor = chat?.avatarColor;
+                                }
+                            }
+
+                            // Inject into props for TextBubble if needed
+                            const enhancedRawMsg = {
+                                ...rawMsg,
+                                props: rawMsg.props ? {
+                                    ...rawMsg.props,
+                                    senderName: msgSenderName,
+                                    senderColor: msgSenderColor
+                                } : undefined
+                            };
+
+                            return (
+                                <div
+                                    key={msg.id}
+                                    data-msg-id={msg.id}
+                                    className={isHighlighted ? 'rounded-2xl border border-accent/30 bg-accent/10 transition-all duration-300' : ''}
                                 >
-                                    <div className="relative">
-                                        {renderBubble(rawMsg)}
-                                        {isStarred && (
-                                            <div className="absolute top-2 right-3 text-accent opacity-90 z-[10]">
-                                                <Icons.Star size={16} />
-                                            </div>
-                                        )}
-                                    </div>
-                                </SwipeableMessage>
-                            </div>
-                        );
-                    })}
+                                    <SwipeableMessage
+                                        id={msg.id}
+                                        align={msg.align}
+                                        isSelected={selectedMessages.includes(msg.id)}
+                                        selectionModeActive={selectionModeActive}
+                                        onToggleSelect={toggleMessageSelection}
+                                        onSwipeToReply={() => { logger.debug('ChatDetail', 'swipe_to_reply', { msgId: msg.id }); setReplyingTo(msg.id); }}
+                                        onContextMenu={handleContextMenu}
+                                        avatarUrl={msgAvatarUrl}
+                                        senderName={msgSenderName}
+                                        senderColor={msgSenderColor}
+                                        isMine={msg.props.isMine}
+                                    >
+                                        <div className="relative">
+                                            {renderBubble(enhancedRawMsg)}
+                                            {isStarred && (
+                                                <div className="absolute top-2 right-3 text-accent opacity-90 z-[10]">
+                                                    <Icons.Star size={16} />
+                                                </div>
+                                            )}
+                                        </div>
+                                    </SwipeableMessage>
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
+
+                {/* Scroll to Bottom FAB */}
+                <AnimatePresence>
+                    {showScrollBottom && (
+                        <motion.button
+                            initial={{ opacity: 0, scale: 0.5 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.5 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={scrollToBottom}
+                            className="absolute bottom-4 right-4 z-[400] w-[42px] h-[42px] bg-bg-surface border border-border-main/10 rounded-full flex items-center justify-center shadow-xl text-text-secondary hover:text-text-primary hover:bg-bg-hover transition-colors"
+                        >
+                            <Icons.ChevronDown size={24} />
+                        </motion.button>
+                    )}
+                </AnimatePresence>
             </div>
 
             {/* Footer */}

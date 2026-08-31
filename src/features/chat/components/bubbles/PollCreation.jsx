@@ -96,7 +96,7 @@ const PollCreation = ({ onClose, onSend }) => {
                         disabled={!canSend}
                         onClick={() => onSend({ question, options, allowMultiple })}
                         className={`w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all active:scale-90 ${
-                            canSend ? 'bg-accent text-white' : 'bg-bg-input text-text-secondary opacity-50 cursor-not-allowed'
+                            canSend ? 'bg-accent text-text-primary' : 'bg-bg-input text-text-secondary opacity-50 cursor-not-allowed'
                         }`}
                     >
                         <Icons.Send size={22} fill="currentColor" className="ml-0.5" />

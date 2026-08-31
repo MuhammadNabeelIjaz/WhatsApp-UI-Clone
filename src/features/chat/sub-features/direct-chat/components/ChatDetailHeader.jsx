@@ -38,7 +38,7 @@ const ChatDetailHeader = ({
 
     return (
     <header
-        className="px-4 py-5 flex items-center shadow-md relative z-[600] border-b"
+        className="px-4 py-5 flex items-center relative z-[600] border-b"
         style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'rgba(255,255,255,0.05)' }}
     >
         <div className="flex items-center gap-3 flex-1 overflow-hidden">
@@ -114,12 +114,16 @@ const ChatDetailHeader = ({
 
         {/* Actions */}
         <div className="flex items-center gap-1 sm:gap-2" style={{ color: 'var(--text-secondary)' }}>
-            <button className="p-2 rounded-full hover:bg-bg-hover" onClick={onVideoCall}>
-                <Icons.Video size={20} />
-            </button>
-            <button className="p-2 rounded-full hover:bg-bg-hover" onClick={onVoiceCall}>
-                <Icons.Phone size={19} />
-            </button>
+            {chat?.contactId !== 'me_contact' && (
+                <>
+                    <button className="p-2 rounded-full hover:bg-bg-hover" onClick={onVideoCall}>
+                        <Icons.Video size={20} />
+                    </button>
+                    <button className="p-2 rounded-full hover:bg-bg-hover" onClick={onVoiceCall}>
+                        <Icons.Phone size={19} />
+                    </button>
+                </>
+            )}
             <div className="w-[1px] h-6 mx-1" style={{ backgroundColor: 'var(--border)' }} />
             <button className="p-2 rounded-full hover:bg-bg-hover" onClick={onSearch}>
                 <Icons.Search size={20} />

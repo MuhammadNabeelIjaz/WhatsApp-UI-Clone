@@ -12,7 +12,7 @@ import HighlightedText from '@shared/ui/display/HighlightedText';
  * When the search bar is open and a query is active, HighlightedText wraps
  * matched substrings in a <mark> tag — zero impact when searchQuery is empty.
  */
-const TextBubble = ({ text, time, isMine, status, isUrdu, reaction, searchQuery }) => {
+const TextBubble = ({ text, time, isMine, status, isUrdu, reaction, searchQuery, senderName, senderColor, onSenderClick }) => {
     return (
         <div className={`relative flex flex-col ${isMine ? 'items-end' : 'items-start'} mb-2`}>
             <div
@@ -23,6 +23,17 @@ const TextBubble = ({ text, time, isMine, status, isUrdu, reaction, searchQuery 
                     }
                 `}
             >
+                {/* Sender Name (if provided) */}
+                {senderName && (
+                    <div 
+                        className="text-[12.5px] font-semibold leading-tight mb-0.5 cursor-pointer hover:underline"
+                        style={{ color: senderColor || (isMine ? '#34b7f1' : '#e53935') }}
+                        onClick={onSenderClick}
+                    >
+                        {senderName}
+                    </div>
+                )}
+
                 {/* Text Area with Urdu Support + Search Highlighting */}
                 <p
                     className={`break-words leading-relaxed pr-2 ${isUrdu ? 'text-[19px] leading-[1.8] text-right' : 'text-[14.5px]'}`}
@@ -60,7 +71,7 @@ const TextBubble = ({ text, time, isMine, status, isUrdu, reaction, searchQuery 
                     >
                         <span className="text-[13px]">{reaction}</span>
                         {/* Multiple reactions count placeholder */}
-                        <span className="text-[10px] text-[#8696a0] font-bold">1</span>
+                        <span className="text-[10px] text-text-secondary font-bold">1</span>
                     </motion.div>
                 )}
             </div>
